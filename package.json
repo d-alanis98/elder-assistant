@@ -1,0 +1,26 @@
+{
+  "name": "elder-assistant",
+  "version": "0.1.0",
+  "description": "Assistance system for elder people",
+  "main": "server.js",
+  "scripts": {
+    "devStart": "nodemon server.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "elder",
+    "assistance",
+    "escom",
+    "tt"
+  ],
+  "author": "Damian Alanis Ramirez",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.17.1",
+    "mongoose": "^5.12.1"
+  },
+  "devDependencies": {
+    "dotenv": "^8.2.0",
+    "nodemon": "^2.0.7"
+  }
+}
