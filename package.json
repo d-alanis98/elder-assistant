@@ -4,7 +4,7 @@
   "description": "Assistance system for elder people",
   "main": "server.js",
   "scripts": {
-    "devStart": "nodemon server.js",
+    "devStart": "nodemon src/app.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [
