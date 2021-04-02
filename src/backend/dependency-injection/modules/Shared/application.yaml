@@ -1,4 +1,20 @@
 services:
-  Shared.Logger:
-    class: ../../../../application/Shared/infrastructure/WinstonLogger
-    arguments: []
+    Shared.MongoConfig:
+        factory:
+            class: ../../../../application/Shared/infrastructure/Persistence/Mongo/MongoConfigFactory
+            method: 'createConfig'
+        arguments: []
+
+    Shared.DataRepository:
+        factory:
+            class: ../../../../application/Shared/infrastructure/Persistence/Mongo/MongoClientFactory
+            method: 'createClient'
+        arguments: ['elder-assistant', '@Shared.MongoConfig']
+
+    Shared.Logger:
+        class: ../../../../application/Shared/infrastructure/WinstonLogger
+        arguments: []
+    
+    Shared.SecurityManager:
+        class: ../../../../application/Shared/infrastructure/Security/BcryptSecurityManager
+        arguments: []

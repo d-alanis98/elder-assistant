@@ -1,6 +1,6 @@
 import { v4 as uuidv4 } from 'uuid';
 import validate from 'uuid-validate';
-import InvalidArgumentError from './InvalidArgumentError';
+import InvalidArgumentError from '../exceptions/InvalidArgumentError';
 
 /**
  * @author Damián Alanís Ramírez

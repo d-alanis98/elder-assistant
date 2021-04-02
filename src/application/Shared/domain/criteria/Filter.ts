@@ -2,7 +2,7 @@ import FilterField from './FilterField';
 import FilterOperator from './FilterOperator';
 import FilterValue from './FilterValue';
 //Exceptions
-import InvalidArgumentError from '../value-object/InvalidArgumentError';
+import InvalidArgumentError from '../exceptions/InvalidArgumentError';
 
 export interface FilterFromStringValues {
     field: string,

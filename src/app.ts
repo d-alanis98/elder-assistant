@@ -2,7 +2,7 @@
 import App from './backend/App';
 //Exceptions
 
-import UncaughtExceptionHandler from './shared/helpers/exceptions/handlers/UncaughtExceptionHandler';
+import UncaughtExceptionHandler from './application/Shared/domain/exceptions/handlers/UncaughtExceptionHandler';
 
 const startApplication = async (): Promise<void> => {
     //We create an instance of the App and invoke the start method

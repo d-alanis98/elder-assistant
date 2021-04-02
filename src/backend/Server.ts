@@ -1,17 +1,23 @@
 
+//HTTP
+import http from 'http';
+import httpStatus from 'http-status';
+//Express
 import express, { Request, Response, Express } from 'express';
+import Router from 'express-promise-router';
+//Middlewares
+import helmet from 'helmet';
 import compress from 'compression';
 import errorHandler from 'errorhandler';
-
-import Router from 'express-promise-router';
-import helmet from 'helmet';
-import * as http from 'http';
-import httpStatus from 'http-status';
+//Domain
 import Logger from '../application/Shared/domain/Logger';
 //Dependency injection
 import container from './dependency-injection';
 //Routes
 import { registerRoutes } from './routes';
+//Configuration
+import app from '../configuration/app';
+
 
 export default class Server {
     private express: Express;
@@ -50,7 +56,7 @@ export default class Server {
         return new Promise(resolve => {
             this.httpServer = this.express.listen(this.port, () => {
                 this.logger.info(
-                    `  Mock Backend App is running at http://localhost:${this.port} in ${this.express.get('env')} mode`
+                    `${ app.name } is running at http://localhost:${this.port} in ${this.express.get('env')} mode`
                 );
                 this.logger.info('  Press CTRL-C to stop\n');
                 resolve();

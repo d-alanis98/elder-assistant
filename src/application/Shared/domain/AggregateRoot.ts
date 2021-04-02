@@ -1,22 +1,8 @@
-import DomainEvent from './DomainEvent';
 
+/**
+ * @author Damián Alanís Ramírez
+ * @version 0.1.1
+ */
 export default abstract class AggregateRoot {
-  private domainEvents: Array<DomainEvent>;
-
-  constructor() {
-    this.domainEvents = [];
-  }
-
-  pullDomainEvents(): Array<DomainEvent> {
-    const domainEvents = this.domainEvents.slice();
-    this.domainEvents = [];
-
-    return domainEvents;
-  }
-
-  record(event: DomainEvent): void {
-    this.domainEvents.push(event);
-  }
-
-  abstract toPrimitives(): any;
+    abstract toPrimitives(): any;
 }
