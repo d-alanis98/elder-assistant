@@ -55,7 +55,7 @@ export default class UserRegisterController extends Controller {
         if(error instanceof UserAlreadyExists)
             response.status(httpStatus.BAD_REQUEST).send(error.message);
         //Base exceptions
-        this.handleBaseExceptions(error, response);
+        else this.handleBaseExceptions(error, response);
         //We log the error
         const logger: Logger = container.get(dependencies.Logger);
         logger.error(error);

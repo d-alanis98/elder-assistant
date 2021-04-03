@@ -32,7 +32,6 @@ export default class UserAuthenticationController extends Controller {
             //We get the user authenticator from the dependencies container
             const userAuthentication: UserAuthentication = container.get(dependencies.UserAuthenticationUseCase);
             //We await the token resolution
-            console.log({ email, password, body: request.body })
             const token: string = await userAuthentication.run({ email, password });
             //Finally, we send the token
             response.status(httpStatus.OK).send(token);
@@ -52,6 +51,6 @@ export default class UserAuthenticationController extends Controller {
         else if(error instanceof UserWithWrongCredentials)
             response.status(httpStatus.UNAUTHORIZED).send(error.message);
         //We handle the base exceptions (InvalidArgument, NotValidParameters or InternalServerError)
-        this.handleBaseExceptions(error, response);
+        else this.handleBaseExceptions(error, response);
     }
 }
