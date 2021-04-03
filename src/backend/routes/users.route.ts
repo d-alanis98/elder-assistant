@@ -1,19 +1,35 @@
-import { Router, Request, Response } from 'express';
-import UserRegisterController from '../controllers/User/UserRegisterController';
+import { Router } from 'express';
+//Dependency injection
 import container from '../dependency-injection';
+import dependencies from '../../application/Shared/domain/constants/dependencies';
+//Middlewares
 import UserValidation from '../middleware/User/UserValidation';
+//Controllers
+import UserFinderController from '../controllers/User/UserFinderController';
+import UserRegisterController from '../controllers/User/UserRegisterController';
+import UserAuthenticationController from '../controllers/User/UserAuthenticationController';
+
+
 
 export const register = (router: Router) => {
-    //const UserPutController = container.get('App.controllers.UserPutController');
-    //router.put('/users/:id', (req: Request, res: Response) => userPutController.run(req, res));
-
-    //const usersGetController = container.get('App.controllers.UsersGetController');
-    //router.get('/users', (req: Request, res: Response) => usersGetController.run(req, res));
-
-    const userRegisterController: UserRegisterController = container.get('Users.Controllers.UserRegisterController');
+    //User login
+    const userAuthenticationController: UserAuthenticationController = container.get(dependencies.UserAuthenticationController);
+    router.post(
+        '/login',
+        UserValidation.loginValidator(),
+        userAuthenticationController.run.bind(userAuthenticationController)
+    );
+    //Register user
+    const userRegisterController: UserRegisterController = container.get(dependencies.UserRegisterController);
     router.post(
         '/register', 
         UserValidation.registerValidator(), 
         userRegisterController.run.bind(userRegisterController)
+    );
+    //Get user by id
+    const userFinderController: UserFinderController = container.get(dependencies.UserFinderController);
+    router.get(
+        '/user/:id',
+        userFinderController.run.bind(userFinderController)
     );
 };

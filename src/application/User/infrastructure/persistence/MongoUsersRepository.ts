@@ -9,7 +9,7 @@ import { DataRepository } from '../../../Shared/infrastructure/Persistence/DataR
 
 /**
  * @author Damián Alanís Ramírez
- * @version 0.1.1
+ * @version 1.1.5
  * @description Mongo DB repository for the Users collection.
  */
 export class MongoUsersRepository extends MongoRepository<User> implements UserRepository, DataRepository<User> {

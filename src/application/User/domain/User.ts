@@ -8,19 +8,9 @@ import UserLastName from './value-objects/UserLastName';
 //Shared
 import AggregateRoot from '../../Shared/domain/AggregateRoot';
 
-
-export interface UserPrimitives {
-    _id: string,
-    name: string,
-    type: string,
-    email: string,
-    lastName: string,
-    password: string,
-};
-
 /**
  * @author Damián Alanís Ramírez
- * @version 0.1.1
+ * @version 1.2.2
  * @description User entity abstraction.
  */
 export default class User extends AggregateRoot {
@@ -101,4 +91,34 @@ export default class User extends AggregateRoot {
         lastName: this.lastName.toString(),
         password: this.password.toString()
     });
+}
+
+export interface UserParameters {
+    id: UserId,
+    name: UserName,
+    type: UserType,
+    email: UserEmail,
+    password: UserPassword,
+    lastName: UserLastName
+};
+
+export interface UserPrimitives {
+    _id: string,
+    name: string,
+    type: string,
+    email: string,
+    lastName: string,
+    password: string,
+};
+
+/**
+ * Interface that defines the structure of the data received in a sign-in form, because it is for a new user that does not have
+ * id yet this field is not included.
+ */
+export interface NewUserPrimitives {
+    name: string,
+    type: string,
+    email: string,
+    lastName: string,
+    password: string,
 }

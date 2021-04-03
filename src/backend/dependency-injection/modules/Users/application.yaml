@@ -4,6 +4,22 @@ services:
         class: ../../../../application/User/infrastructure/persistence/MongoUsersRepository
         arguments: ["@Shared.DataRepository"]
     #Controllers
+    Users.Controllers.UserFinderController:
+        class: ../../../../backend/controllers/User/UserFinderController
+        arguments: []
     Users.Controllers.UserRegisterController:
-        class: ../../../../backend\controllers\User\UserRegisterController
+        class: ../../../../backend/controllers/User/UserRegisterController
+        arguments: []
+    Users.Controllers.UserAuthenticationController:
+        class: ../../../../backend/controllers/User/UserAuthenticationController
+        arguments: []
+    #Use cases
+    Users.UseCases.UserFinder:
+        class: ../../../../application/User/application/find/UserFinder
+        arguments: ["@Users.UserRepository"]
+    Users.UseCases.UserCreator:
+        class: ../../../../application/User/application/create/UserCreator
+        arguments: ["@Users.UserRepository"]
+    Users.UseCases.UserAuthentication:
+        class: ../../../../application/User/application/authentication/UserAuthentication
         arguments: ["@Users.UserRepository"]

@@ -14,7 +14,12 @@ services:
     Shared.Logger:
         class: ../../../../application/Shared/infrastructure/WinstonLogger
         arguments: []
+
+    Shared.EmailHasher:
+        class: ../../../../application/Shared/infrastructure/Security/SHASecurityManager
+        arguments: []
     
-    Shared.SecurityManager:
+    Shared.PasswordHasher:
         class: ../../../../application/Shared/infrastructure/Security/BcryptSecurityManager
         arguments: []
+
