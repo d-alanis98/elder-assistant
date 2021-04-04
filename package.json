@@ -1,6 +1,6 @@
 {
   "name": "elder-assistant",
-  "version": "2.1.24",
+  "version": "2.1.25",
   "description": "Assistance system for elder people",
   "main": "server.js",
   "scripts": {
