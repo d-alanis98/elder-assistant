@@ -19,7 +19,7 @@ import dependencies from "../../../Shared/domain/constants/dependencies";
 
 /**
  * @author Damián Alanís Ramírez
- * @version 1.1.5
+ * @version 1.3.2
  * @description Create user use case abstraction. It handles the validation of user non existance in the repository, throwing
  * and exception when the user already exists and creating a new User instance otherwise, as well as saving it to the repository.
  */
@@ -63,7 +63,7 @@ export default class UserCreator {
             new UserLastName(lastName)
         );
         //We save the user in the repository
-        await this.dataRepository.save(user);
+        await this.dataRepository.create(user);
         //Finally, we return the user instance
         return user;
     }
