@@ -1,7 +1,6 @@
 //Application
 import App from './backend/App';
 //Exceptions
-
 import UncaughtExceptionHandler from './application/Shared/domain/exceptions/handlers/UncaughtExceptionHandler';
 
 const startApplication = async (): Promise<void> => {
@@ -18,5 +17,3 @@ startApplication()
 process.on('uncaughtException', error => {
     new UncaughtExceptionHandler(error).handle();
 });
-
-

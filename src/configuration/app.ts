@@ -9,4 +9,7 @@ export default {
     serverPort: process.env['SERVER_PORT'] || 3000,
     encryptionKey: process.env['APP_KEY'] || '',
     encrptionCipher: process.env['APP_CIPHER'] || 'AES-256-CBC',
+    //JWT
+    jwtPrivateKey: process.env['JWT_PRIVATE_KEY'] || '',
+    jwtRefreshPrivateKey: process.env['JWT_REFRESH_PRIVATE_KEY'] || '',
 }
