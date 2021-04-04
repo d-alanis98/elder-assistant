@@ -40,8 +40,11 @@ if(versionMembers.length < 3) { //If there are less than 3 members, we fill the 
     let missingMembers = 3 - versionMembers.length;
     for(let iterator = 0; iterator < missingMembers; iterator++)
         versionMembers.push(0);
-} else if(versionMembers > 3) //If there are more than 3 version members, we discard the last one
-    versionMembers.pop();
+} else if(versionMembers.length > 3) { //If there are more than 3 version members, we discard the extra ones
+    let extraMembers = versionMembers.length - 3;
+    for(let iterator = 0; iterator < extraMembers; iterator++)
+        versionMembers.pop();
+}
 //At this point, the version has exactly 3 members, but some of them may still be strings, so we map and transform each one to number
 try {
     versionMembers = versionMembers.map(versionMember => Number(versionMember));
