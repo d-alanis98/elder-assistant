@@ -6,8 +6,10 @@
  * - PATCH version when you make backwards compatible bug fixes.
  */
 const fs = require('fs');
-const packageJson = require('../../package.json');
-const { applyStyles, RED_COLOR, BLUE_COLOR, GREEN_COLOR } = require('../utils/cliStyles');
+const path = require('path');
+const { exec } = require('child_process');
+const packageJson = require(`${process.cwd()}/package.json`);
+const { applyStyles, RED_COLOR, BLUE_COLOR, GREEN_COLOR, WHITE_BACKGROUND, GREEN_BACKGROUND, WHITE_COLOR } = require('../utils/cliStyles');
 
 
 const arguments = process.argv;
@@ -76,3 +78,27 @@ fs.writeFileSync(
     `${process.cwd()}/package.json`, 
     JSON.stringify(packageJson, null, 2)
 );
+
+console.log('\nPushing update to git repository');
+
+//Command to add the package.json to staging area, commit and push to the git repository.
+const command = 'git add package.json && git commit -m \"Update package.json\" && git push';
+//We execute the command and handle the response
+exec(command, (error, output, errorMessage) => {
+    if(error)
+        console.log(
+            applyStyles(
+                RED_COLOR,
+                `\n${errorMessage}`
+            )
+        );
+    else console.log(`\n\n${
+        applyStyles(
+            [GREEN_BACKGROUND, WHITE_COLOR],
+            'Successful operation: '
+        )}\n${ applyStyles(
+            GREEN_COLOR,
+            output
+        )}`
+    )
+});
