@@ -7,7 +7,7 @@
     "dev": "nodemon --exec ts-node src/app.ts",
     "test": "echo \"Error: no test specified\" && exit 1",
     "generateKey": "node src/scripts/generateKey.js",
-    "increaseVersion": "node src/scripts/increaseVersion.js"
+    "increaseVersion": "node src/scripts/increaseVersion.js && git add package.json && git commit -m \"Update package.json\" && git push"
   },
   "keywords": [
     "elder",
