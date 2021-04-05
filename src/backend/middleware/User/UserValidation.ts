@@ -4,7 +4,7 @@ import { AllowedUserTypes } from '../../../application/User/domain/value-objects
 
 /**
  * @author Damián Alanís Ramírez
- * @verison 1.1.3
+ * @verison 1.2.5
  */
 export default class UserValidation {
     /**
@@ -56,6 +56,15 @@ export default class UserValidation {
             .withMessage('Last name cannot contain special characters')
             .isLength({ max: 40 })
             .withMessage('The maximum number of characters for the last name is 40')
+            .trim()
+            .escape(),
+        check('dateOfBirth')
+            .notEmpty()
+            .withMessage('Date of birth is required')
+            .bail()
+            .isDate()
+            .withMessage('Date must have a valid format (ISO).')
+            .bail()
             .trim()
             .escape(),
     ]

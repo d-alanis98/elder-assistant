@@ -5,12 +5,17 @@ import UserType from './value-objects/UserType';
 import UserEmail from './value-objects/UserEmail';
 import UserPassword from './value-objects/UserPassword';
 import UserLastName from './value-objects/UserLastName';
+import UserDateOfBirth from './value-objects/UserDateOfBirth';
 //Shared
+import { Nullable } from '../../Shared/domain/Nullable';
 import AggregateRoot from '../../Shared/domain/AggregateRoot';
+//Dependency injection
+import dependenciesReferences from '../../Shared/infrastructure/constants/dependenciesReferences';
+
 
 /**
  * @author Damián Alanís Ramírez
- * @version 1.2.2
+ * @version 3.5.7
  * @description User entity abstraction.
  */
 export default class User extends AggregateRoot {
@@ -18,16 +23,18 @@ export default class User extends AggregateRoot {
     readonly name: UserName;
     readonly type: UserType;
     readonly email: UserEmail;
-    readonly password: UserPassword;
+    readonly password: Nullable<UserPassword>;
     readonly lastName: UserLastName;
+    readonly dateOfBirth: UserDateOfBirth;
 
     constructor(
         id: UserId,
         name: UserName,
         type: UserType,
         email: UserEmail,
-        password: UserPassword,
-        lastName: UserLastName
+        password: Nullable<UserPassword>,
+        lastName: UserLastName,
+        dateOfBirth: UserDateOfBirth
     ) {
         super();
         this.id = id;
@@ -36,31 +43,8 @@ export default class User extends AggregateRoot {
         this.email = email;
         this.password = password;
         this.lastName = lastName;
+        this.dateOfBirth = dateOfBirth;
     }
-
-    /**
-     * Facade method to create a user without using new operator
-     * @param {UserId} id User ID
-     * @param {UserName} name User name 
-     * @param {UserType} type User type {PRIMARY|SECONDARY}
-     * @param {UserLastName} lastName User last name
-     * @returns 
-     */
-    static create = (
-        id: UserId,
-        name: UserName,
-        type: UserType,
-        email: UserEmail,
-        password: UserPassword,
-        lastName: UserLastName
-    ): User => new User(
-        id, 
-        name, 
-        type, 
-        email,
-        password,
-        lastName
-    );
 
     /**
      * Facade method to create a user from primitive types
@@ -75,22 +59,92 @@ export default class User extends AggregateRoot {
         new UserName(userPrimitives.name),
         new UserType(userPrimitives.type),
         new UserEmail(userPrimitives.email),
-        new UserPassword(userPrimitives.password),
-        new UserLastName(userPrimitives.lastName)
+        User.getPasswordFromPrimitive(userPrimitives.password),
+        new UserLastName(userPrimitives.lastName),
+        new UserDateOfBirth(userPrimitives.dateOfBirth)
     );
 
     /**
      * Returns a primitive value object representation of the instance
      * @returns {Object} primitive values object
      */
-    toPrimitives = (): UserPrimitives => ({
-        _id: this.id.toString(),
-        name: this.name.toString(),
-        type: this.type.value,
-        email: this.email.toString(),
-        lastName: this.lastName.toString(),
-        password: this.password.toString()
-    });
+    toPrimitives = (): UserPrimitives => {
+        let userPrimitives: UserPrimitives = {
+            _id: this.id.toString(),
+            name: this.name.toString(),
+            type: this.type.value,
+            email: this.email.toString(),
+            lastName: this.lastName.toString(),
+            dateOfBirth: this.dateOfBirth.toString()
+        };
+        //We add the password to the primitives only if it exists in the instance
+        if(this.password)
+            userPrimitives.password = this.password.toString();
+        return userPrimitives;
+    }
+
+    //Facade
+
+    /**
+     * Facade method to create a user without using new operator
+     * @param {UserId} id User ID
+     * @param {UserName} name User name 
+     * @param {UserType} type User type {PRIMARY|SECONDARY}
+     * @param {UserLastName} lastName User last name
+     * @returns 
+     */
+    static create = (
+        id: UserId,
+        name: UserName,
+        type: UserType,
+        email: UserEmail,
+        password: Nullable<UserPassword>,
+        lastName: UserLastName,
+        dateOfBirth: UserDateOfBirth
+    ): User => new User(
+        id,
+        name,
+        type,
+        email,
+        password,
+        lastName,
+        dateOfBirth
+    );
+
+
+    /**
+     * Method to get a user with the password data set to null, to not include in into the primitives.
+     * @param {User} user The user with password data. 
+     * @returns The user without password data.
+     */
+    static getUserWithoutPassword = (user: User) => new User(
+        user.id,
+        user.name,
+        user.type,
+        user.email,
+        null,
+        user.lastName,
+        user.dateOfBirth,
+    );
+
+    //Helpers
+    
+    getAge = () => {
+        const DateService = dependenciesReferences.DateService;
+        const dateService = new DateService(this.dateOfBirth.toISOString());
+        return dateService.getAge();
+    }
+
+    /**
+     * Method to get the UserPassword instance of null, if the primitive password does not exist.
+     * @param passwordPrimitive Password primitive, which can be non existant (undefined).
+     * @returns 
+     */
+    static getPasswordFromPrimitive = (passwordPrimitive?: string): Nullable<UserPassword> => (
+        passwordPrimitive
+            ? new UserPassword(passwordPrimitive)
+            : null
+    );
 }
 
 export interface UserParameters {
@@ -108,7 +162,8 @@ export interface UserPrimitives {
     type: string,
     email: string,
     lastName: string,
-    password: string,
+    password?: string,
+    dateOfBirth: string,
 };
 
 /**
@@ -121,4 +176,5 @@ export interface NewUserPrimitives {
     email: string,
     lastName: string,
     password: string,
+    dateOfBirth: string,
 }

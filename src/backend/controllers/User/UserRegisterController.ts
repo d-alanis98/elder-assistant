@@ -1,5 +1,4 @@
 import { Request, Response } from 'express';
-import { ValidationError } from 'express-validator';
 import httpStatus from 'http-status';
 //User domain
 import User from '../../../application/User/domain/User';
@@ -7,8 +6,6 @@ import UserCreator from '../../../application/User/application/create/UserCreato
 import UserAlreadyExists from '../../../application/User/domain/exceptions/UserAlreadyExists';
 //Shared
 import Logger from '../../../application/Shared/domain/Logger';
-import NotValidParameters from '../../../application/Shared/domain/exceptions/NotValidParameters';
-import InvalidArgumentError from '../../../application/Shared/domain/exceptions/InvalidArgumentError';
 //Base controller
 import Controller from '../Controller';
 //Dependency injection
@@ -19,7 +16,7 @@ import dependencies from '../../../application/Shared/domain/constants/dependenc
 
 /**
  * @author Damián Alanís Ramírez
- * @version 1.3.1
+ * @version 1.4.3
  * @description Controller for the register use case.
  */
 export default class UserRegisterController extends Controller {
@@ -30,14 +27,14 @@ export default class UserRegisterController extends Controller {
      */
     run = async (request: Request, response: Response) => {
         //We get the data from the request body
-        const { name, email, type, lastName, password } = request.body;
+        const { name, email, type, lastName, password, dateOfBirth } = request.body;
         try {
             //We validate the request
             this.validateRequest(request);
             //We get a UserCreator (use case) instance from the dependencies cotainer
             const userCreator: UserCreator = container.get(dependencies.UserCreateUseCase);
             //We create a new user
-            const user: User = await userCreator.run({ name, email, type, lastName, password });
+            const user: User = await userCreator.run({ name, email, type, lastName, password, dateOfBirth });
             //We send the response with the user as JSON body
             response.status(httpStatus.OK).send(user);
         } catch(error) {

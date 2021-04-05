@@ -4,6 +4,7 @@ import container from '../dependency-injection';
 import dependencies from '../../application/Shared/domain/constants/dependencies';
 //Middlewares
 import UserValidation from '../middleware/User/UserValidation';
+import UserAuthentication from '../middleware/User/UserAuthentication';
 //Controllers
 import UserFinderController from '../controllers/User/UserFinderController';
 import UserRegisterController from '../controllers/User/UserRegisterController';
@@ -30,6 +31,7 @@ export const register = (router: Router) => {
     const userFinderController: UserFinderController = container.get(dependencies.UserFinderController);
     router.get(
         '/user/:id',
+        UserAuthentication.validateToken,
         userFinderController.run.bind(userFinderController)
     );
 };

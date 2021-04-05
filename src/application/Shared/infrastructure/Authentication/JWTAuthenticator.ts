@@ -5,10 +5,11 @@ import AggregateRoot from '../../domain/AggregateRoot';
 import AuthorizationNotProvided from '../../domain/exceptions/AuthorizationNotProvided';
 //Configuration variables
 import app from '../../../../configuration/app';
+import NotAuthorized from '../../domain/exceptions/NotAuthorized';
 
 /**
  * @author Dmaián Alanís Ramírez
- * @version 1.3.5
+ * @version 1.4.7
  */
 export default class JWTAuthenticator implements Authenticator {
 
@@ -72,7 +73,13 @@ export default class JWTAuthenticator implements Authenticator {
         if(!token)
             throw new AuthorizationNotProvided();
         //We verify the token signature and get the value
-        return jwt.verify(token, passphrase);
+        try {
+            const data: Object = jwt.verify(token, passphrase);
+            return data;
+        } catch(error) {
+            //If we get an error veryfing the signature it is because the token is invalid or malformed
+            throw new NotAuthorized('Invalid or malformed token');
+        }
     }
 
     /**

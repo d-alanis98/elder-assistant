@@ -16,7 +16,7 @@ import dependencies from '../../../Shared/domain/constants/dependencies';
 
 /**
  * @author Damián Alanís Ramírez
- * @version 1.1.4
+ * @version 2.4.6
  * @description User authentication use case abstraction, it handles the authentication of the user, given an email and a 
  * password in plain text, it makes use of the password hasher to compare the stored hashed password and resolve if the 
  * credentials are correct, throwing an exception if they don't match.
@@ -42,10 +42,27 @@ export default class UserAuthentication {
         const userId: UserId = await this.getUserId(userEmail);
         //We get the user in the database, making use of the use case UserFinder
         const user: User = await this.getUser(userId);
+        //We set the stored password in a variable, it is safe to make the cast to UserPassword because this field will always exist in DB.
+        const storedPassword: UserPassword = <UserPassword> user.password;
         //We validate the password, if it does not match, we throw a UserWithWrongCredentials exception
-        if(!(await this.comparePasswords(userPassword, user.password)))
+        if(!(await this.comparePasswords(userPassword, storedPassword)))
             throw new UserWithWrongCredentials();
-        return 'OK'; //Later it will be the token
+        //We return the authentication token for the user
+        return await this.generateToken(user); 
+    }
+
+    /**
+     * Method that generates a token with the Authenticator dependency.
+     * @param {User} user User data to store in the token. 
+     * @returns 
+     */
+    private generateToken = async (user: User): Promise<string> => {
+        //We get all the user properties except from the password (even if it is a hash we don't want to expose it).
+        const userWithoutPassword: User = User.getUserWithoutPassword(user);
+        //We use the authenticator to sign and generate the token
+        const authenticator = container.get(dependencies.Authenticator);
+        //We generate the token that stores the user data
+        return await authenticator.signAuthToken(userWithoutPassword);
     }
 
     /**

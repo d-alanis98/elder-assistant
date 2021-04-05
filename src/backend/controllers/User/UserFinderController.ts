@@ -12,7 +12,7 @@ import dependencies from '../../../application/Shared/domain/constants/dependenc
 
 /**
  * @author Damián Alanís Ramírez
- * @version 1.1.3
+ * @version 1.2.3
  * @description Controller for the get user use case.
  */
 export default class UserFinderController extends Controller {
@@ -32,7 +32,7 @@ export default class UserFinderController extends Controller {
         } catch(error) {
             if(error instanceof UserNotFound)
                 response.status(httpStatus.NOT_FOUND).send(error.message);
-            else response.status(httpStatus.INTERNAL_SERVER_ERROR).json(error);
+            else this.handleBaseExceptions(error, response);
         } 
     }
 }

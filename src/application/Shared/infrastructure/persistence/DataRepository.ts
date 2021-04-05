@@ -1,4 +1,4 @@
-import { Nullable } from "../../domain/Nullable";
+import { Nullable } from '../../domain/Nullable';
 
 /**
  * @author Damián Alanís Ramírez

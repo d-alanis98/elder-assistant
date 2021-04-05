@@ -23,3 +23,7 @@ services:
         class: ../../../../application/Shared/infrastructure/Security/BcryptSecurityManager
         arguments: []
 
+    Shared.Authenticator:
+        class: ../../../../application/Shared/infrastructure/Authentication/JWTAuthenticator
+        arguments: []
+

@@ -2,6 +2,7 @@ import httpStatus from 'http-status';
 import { Request, Response } from 'express';
 import { validationResult, ValidationError } from 'express-validator';
 //Domain
+import NotAuthorized from '../../application/Shared/domain/exceptions/NotAuthorized';
 import NotValidParameters from '../../application/Shared/domain/exceptions/NotValidParameters';
 import InvalidArgumentError from '../../application/Shared/domain/exceptions/InvalidArgumentError';
 
@@ -41,12 +42,15 @@ export default abstract class Controller {
      * @param {Response} response Express repsonse.
      */
     protected handleBaseExceptions = (error: Error, response: Response) => {
+        console.log({ instanceOfNotAuthorized: error instanceof NotAuthorized})
         if(error instanceof NotValidParameters || error instanceof InvalidArgumentError)
             response.status(httpStatus.BAD_REQUEST).send(
                 error instanceof NotValidParameters
                     ? error.errors
                     : error.message
             );
+        else if(error instanceof NotAuthorized)
+            response.status(error.getStatusCode()).send(error.message);
         else response.status(httpStatus.INTERNAL_SERVER_ERROR).send(error.message);
     }
 }

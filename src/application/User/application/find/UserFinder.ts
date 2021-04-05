@@ -1,11 +1,12 @@
-import UserId from "../../../Shared/domain/modules/User/UserId";
-import UserNotFound from "../../domain/exceptions/UserNotFound";
-import User from "../../domain/User";
-import UserRepository from "../../domain/UserRepository";
+//User domain
+import User from '../../domain/User';
+import UserId from '../../../Shared/domain/modules/User/UserId';
+import UserNotFound from '../../domain/exceptions/UserNotFound';
+import UserRepository from '../../domain/UserRepository';
 
 /**
  * @author Damián Alanís Ramírez
- * @version 1.0.1
+ * @version 1.2.2
  * @description Find user use case abstraction, it returns a User instance if the provided userId was found in the repository
  * or throws an exception if it wasn't.
  */

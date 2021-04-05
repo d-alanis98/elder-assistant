@@ -1,10 +1,14 @@
+import ErrorWithStatusCode from "./ErrorWithStatusCode";
+
 /**
  * @author Damián Alanís Ramírez
- * @version 0.1.1
+ * @version 1.2.2
  * @desciption Custom exception for not provided authorization method (i.e: Token or cookie value).
  */
- export default class AuthorizationNotProvided extends Error {
+ export default class AuthorizationNotProvided extends ErrorWithStatusCode {
     constructor() {
         super('Authorization method not provided');
+
+        this.statusCode = 401;
     }
  }

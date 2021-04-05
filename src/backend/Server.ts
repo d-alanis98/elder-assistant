@@ -3,7 +3,7 @@
 import http from 'http';
 import httpStatus from 'http-status';
 //Express
-import express, { Request, Response, Express } from 'express';
+import express, { Request, Response, Express, Router as ExpressRouter } from 'express';
 import Router from 'express-promise-router';
 //Middlewares
 import helmet from 'helmet';
@@ -11,6 +11,7 @@ import compress from 'compression';
 import errorHandler from 'errorhandler';
 //Domain
 import Logger from '../application/Shared/domain/Logger';
+import ErrorWithStatusCode from '../application/Shared/domain/exceptions/ErrorWithStatusCode';
 //Dependency injection
 import container from './dependency-injection';
 //Routes
@@ -40,16 +41,13 @@ export default class Server {
         this.express.use(helmet.frameguard({ action: 'deny' }));
         this.express.use(compress());
         //Routes
-        const router = Router();
+        const router: ExpressRouter = Router();
         router.use(errorHandler());
         this.express.use(router);
         //We register the routes
         registerRoutes(router);
-        //And we supply the routes to the 
-        router.use((err: Error, req: Request, res: Response, next: Function) => {
-            this.logger.error(err);
-            res.status(httpStatus.INTERNAL_SERVER_ERROR).send(err.message);
-        });
+        //And we supply the error handling
+        this.handleExceptions(router);
     }
 
     async listen(): Promise<void> {
@@ -66,6 +64,17 @@ export default class Server {
 
     getHTTPServer() {
         return this.httpServer;
+    }
+
+    handleExceptions = (router: ExpressRouter) => {
+        router.use((error: Error, request: Request, response: Response, next: Function) => {
+            if(error instanceof ErrorWithStatusCode)
+                response.status(error.getStatusCode()).send(error.message);
+            else { //Internal server error
+                this.logger.error(error);
+                response.status(httpStatus.INTERNAL_SERVER_ERROR).send(error.message);
+            }
+        });
     }
 
     async stop(): Promise<void> {
