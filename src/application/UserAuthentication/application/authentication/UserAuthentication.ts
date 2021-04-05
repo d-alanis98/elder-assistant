@@ -1,30 +1,32 @@
 //User domain
-import User from '../../domain/User';
+import User from '../../../User/domain/User';
 import UserId from '../../../Shared/domain/modules/User/UserId';
-import UserEmail from '../../domain/value-objects/UserEmail';
-import UserPassword from '../../domain/value-objects/UserPassword';
-import UserRepository from '../../domain/UserRepository';
-import UserWithWrongCredentials from '../../domain/exceptions/UserWithWrongCredentials';
+import UserEmail from '../../../User/domain/value-objects/UserEmail';
+import UserPassword from '../../../User/domain/value-objects/UserPassword';
+import UserAuthenticationToken from '../../domain/value-objects/UserAuthenticationToken';
+import UserAuthenticationAgent from '../../domain/value-objects/UserAuthenticationAgent';
+import UserAuthenticationEntity from '../../domain/UserAuthentication';
+import UserWithWrongCredentials from '../../../User/domain/exceptions/UserWithWrongCredentials';
+import UserAuthenticationRepository from '../../domain/UserAuthenticationRepository';
 //Use cases
-import UserFinder from '../find/UserFinder';
+import UserFinder from '../../../User/application/find/UserFinder';
 //Infrastructure
 import SecurityManager from '../../../Shared/infrastructure/Security/SecurityManager';
 //Dependency injection
 import container from '../../../../backend/dependency-injection';
 import dependencies from '../../../Shared/domain/constants/dependencies';
 
-
 /**
  * @author Damián Alanís Ramírez
- * @version 2.4.6
+ * @version 3.5.8
  * @description User authentication use case abstraction, it handles the authentication of the user, given an email and a 
  * password in plain text, it makes use of the password hasher to compare the stored hashed password and resolve if the 
  * credentials are correct, throwing an exception if they don't match.
  */
 export default class UserAuthentication {
-    private readonly dataRepository: UserRepository;
+    private readonly dataRepository: UserAuthenticationRepository;
 
-    constructor(dataRepository: UserRepository) {
+    constructor(dataRepository: UserAuthenticationRepository) {
         this.dataRepository = dataRepository;
     }
 
@@ -32,10 +34,12 @@ export default class UserAuthentication {
      * Entry point for the use case.
      * @param {UserCredentials} credentials User credentials, which may be of string type.
      */
-    public run = async ({
-        email,
-        password
-    }: UserCredentials): Promise<string> => {
+    public run = async (
+        userCredentials: UserCredentials, 
+        userDeviceName: string,
+        userDeviceType: string
+    ): Promise<Object> => {
+        const { email, password }: UserCredentials = userCredentials;
         //We force the credentials to be value-objects, for consistency
         const { email: userEmail, password: userPassword }: UserCredentials = this.normalizeCredentials({ email, password });
         //We get the user's ID
@@ -48,7 +52,7 @@ export default class UserAuthentication {
         if(!(await this.comparePasswords(userPassword, storedPassword)))
             throw new UserWithWrongCredentials();
         //We return the authentication token for the user
-        return await this.generateToken(user); 
+        return await this.generateTokens(user, userDeviceName, userDeviceType); 
     }
 
     /**
@@ -56,13 +60,28 @@ export default class UserAuthentication {
      * @param {User} user User data to store in the token. 
      * @returns 
      */
-    private generateToken = async (user: User): Promise<string> => {
+    private generateTokens = async (
+        user: User,
+        userDeviceName: string,
+        userDeviceType: string
+    ): Promise<Object> => {
         //We get all the user properties except from the password (even if it is a hash we don't want to expose it).
         const userWithoutPassword: User = User.getUserWithoutPassword(user);
         //We use the authenticator to sign and generate the token
         const authenticator = container.get(dependencies.Authenticator);
+        //We get the resfresh token
+        const refreshToken = await authenticator.signRefreshToken(userWithoutPassword);
+        //We save it to the repository
+        this.dataRepository.create(new UserAuthenticationEntity(
+            user.id,
+            new UserAuthenticationAgent(userDeviceName, userDeviceType),
+            new UserAuthenticationToken(refreshToken)
+        ));
         //We generate the token that stores the user data
-        return await authenticator.signAuthToken(userWithoutPassword);
+        return {
+            token: await authenticator.signAuthToken(userWithoutPassword), 
+            refreshToken: refreshToken
+        }; 
     }
 
     /**

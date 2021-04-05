@@ -1,10 +1,13 @@
 import { Request, Response } from 'express';
+import { parse } from 'platform';
 import httpStatus from 'http-status';
 //User domain
 import UserNotFound from '../../../application/User/domain/exceptions/UserNotFound';
 import UserWithWrongCredentials from '../../../application/User/domain/exceptions/UserWithWrongCredentials';
+//User authentication domain
+import { AuthenticationDeviceAgent } from '../../../application/UserAuthentication/domain/UserAuthentication';
 //Use cases
-import UserAuthentication from '../../../application/User/application/authentication/UserAuthentication';
+import UserAuthentication from '../../../application/UserAuthentication/application/authentication/UserAuthentication';
 //Base
 import Controller from '../Controller';
 //Dependency injection
@@ -13,7 +16,7 @@ import dependencies from '../../../application/Shared/domain/constants/dependenc
 
 /**
  * @author Damián Alanís Ramírez
- * @version 1.0.1
+ * @version 2.6.6
  * @description Controller for the authentication use case.
  */
 export default class UserAuthenticationController extends Controller {
@@ -31,12 +34,38 @@ export default class UserAuthenticationController extends Controller {
             this.validateRequest(request);
             //We get the user authenticator from the dependencies container
             const userAuthentication: UserAuthentication = container.get(dependencies.UserAuthenticationUseCase);
+            //We get the user device agent
+            const { deviceName, deviceType }: AuthenticationDeviceAgent = this.getDeviceAgent(request);
             //We await the token resolution
-            const token: string = await userAuthentication.run({ email, password });
+            const tokens: Object = await userAuthentication.run(
+                { email, password }, 
+                deviceName,
+                deviceType
+            );
             //Finally, we send the token
-            response.status(httpStatus.OK).send(token);
+            response.status(httpStatus.OK).send(tokens);
         } catch(error) {
             this.handleExceptions(error, response);
+        }
+    }
+
+    /**
+     * Method to get the device from which the user made the request (for the UserAuthentication collection).
+     * @param {Request} request 
+     * @returns {string} Device name string.
+     */
+    private getDeviceAgent = (request: Request): AuthenticationDeviceAgent => {
+        //We look for the device name in request body
+        const { body: { deviceName, deviceType } } = request;
+        if(deviceName)
+            return { deviceName, deviceType };
+        //If it is no present, we get the device name by the user agent header
+        const { headers } = request;
+        const parser = parse(headers['user-agent']);
+        //We return the parsed name of the user agent
+        return {
+            deviceName: parser?.name || 'other',
+            deviceType: 'other'
         }
     }
 

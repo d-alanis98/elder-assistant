@@ -19,11 +19,18 @@ import { registerRoutes } from './routes';
 //Configuration
 import app from '../configuration/app';
 
-
+/**
+ * @author Damian Alanis Ramirez
+ * @version 4.4.8
+ * @description Server implementation with Express framework. This creates the server,
+ * apply middlewares, register routes, register the error handler and starts the server 
+ * that will attend requests in the specified port.
+ */
 export default class Server {
-    private express: Express;
     private port: number | string;
     private logger: Logger;
+    private router?: ExpressRouter; 
+    private express?: Express;
     private httpServer?: http.Server;
 
     constructor(port: number | string) {
@@ -32,6 +39,17 @@ export default class Server {
         //Logger
         this.logger = container.get('Shared.Logger');
         //Express
+        this.setExpress();
+        //Routes
+        this.registerRoutes();
+        //And we supply the error handling
+        this.handleExceptions();
+    }
+
+    /**
+     * Method to set the express instance and register middlewares.
+     */
+    private setExpress = (): void => {
         this.express = express();
         this.express.use(express.json());
         this.express.use(express.urlencoded({ extended: true }));
@@ -40,21 +58,32 @@ export default class Server {
         this.express.use(helmet.hidePoweredBy());
         this.express.use(helmet.frameguard({ action: 'deny' }));
         this.express.use(compress());
-        //Routes
-        const router: ExpressRouter = Router();
-        router.use(errorHandler());
-        this.express.use(router);
-        //We register the routes
-        registerRoutes(router);
-        //And we supply the error handling
-        this.handleExceptions(router);
     }
 
+    /**
+     * Method to register the route sof the application.
+     */
+    private registerRoutes = () => {
+        const router: ExpressRouter = Router();
+        router.use(errorHandler());
+        this.express?.use(router);
+        //We register the routes
+        registerRoutes(router);
+        //We set the route rin the instance state
+        this.router = router;
+    }
+
+    /**
+     * Starts the server, which will be listening for requests in the specified port.
+     * @returns 
+     */
     async listen(): Promise<void> {
-        return new Promise(resolve => {
+        return new Promise((resolve, reject) => {
+            if(!this.express)
+                return reject();
             this.httpServer = this.express.listen(this.port, () => {
                 this.logger.info(
-                    `${ app.name } is running at http://localhost:${this.port} in ${this.express.get('env')} mode`
+                    `${ app.name } is running at http://localhost:${this.port} in ${this.express?.get('env')} mode`
                 );
                 this.logger.info('  Press CTRL-C to stop\n');
                 resolve();
@@ -62,12 +91,17 @@ export default class Server {
         });
     }
 
-    getHTTPServer() {
-        return this.httpServer;
-    }
+    /**
+     * Getter for the HTTP server instance.
+     * @returns 
+     */
+    getHTTPServer = (): http.Server | undefined => this.httpServer;
 
-    handleExceptions = (router: ExpressRouter) => {
-        router.use((error: Error, request: Request, response: Response, next: Function) => {
+    /**
+     * Exception handler for Express errors (which may be thrown across requests or middlewares).
+     */
+    handleExceptions = (): void => {
+        this.router?.use((error: Error, request: Request, response: Response, next: Function) => {
             if(error instanceof ErrorWithStatusCode)
                 response.status(error.getStatusCode()).send(error.message);
             else { //Internal server error
@@ -77,17 +111,19 @@ export default class Server {
         });
     }
 
+    /**
+     * Method to stop listening to requests.
+     * @returns {Promise<void>}
+     */
     async stop(): Promise<void> {
         return new Promise((resolve, reject) => {
-            if (this.httpServer) {
+            if(this.httpServer)
                 this.httpServer.close(error => {
                     if (error) {
                         return reject(error);
                     }
                     return resolve();
                 });
-            }
-
             return resolve();
         });
     }

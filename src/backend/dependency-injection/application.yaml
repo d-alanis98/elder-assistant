@@ -1,3 +1,4 @@
 imports:
-  - { resource: ./modules/Shared/application.yaml }
-  - { resource: ./modules/Users/application.yaml }
+    - { resource: ./modules/Shared/application.yaml }
+    - { resource: ./modules/Users/application.yaml }
+    - { resource: ./modules/UserAuthentication/application.yaml }

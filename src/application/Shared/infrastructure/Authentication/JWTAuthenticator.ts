@@ -3,18 +3,20 @@ import jwt from 'jsonwebtoken';
 import Authenticator from '../../domain/authentication/Authenticator';
 import AggregateRoot from '../../domain/AggregateRoot';
 import AuthorizationNotProvided from '../../domain/exceptions/AuthorizationNotProvided';
+//Infrastructure exceptions
+import ExpiredToken from './exceptions/ExpiredToken';
+import InvalidOrMalformedToken from './exceptions/InvalidOrMalformedToken';
 //Configuration variables
 import app from '../../../../configuration/app';
-import NotAuthorized from '../../domain/exceptions/NotAuthorized';
 
 /**
  * @author Dmaián Alanís Ramírez
- * @version 1.4.7
+ * @version 1.6.8
  */
 export default class JWTAuthenticator implements Authenticator {
 
     private jwtOptions: Object;
-    private readonly expirationDate: string = '1h';
+    private readonly expirationDate: string = '10m';
 
     constructor(jwtOptions: Object = { }) {
         this.jwtOptions = {
@@ -77,8 +79,11 @@ export default class JWTAuthenticator implements Authenticator {
             const data: Object = jwt.verify(token, passphrase);
             return data;
         } catch(error) {
+            //We verify if the token has expired
+            if(error.name === ExpiredToken.expiredTokenError)
+                throw new ExpiredToken();
             //If we get an error veryfing the signature it is because the token is invalid or malformed
-            throw new NotAuthorized('Invalid or malformed token');
+            else throw new InvalidOrMalformedToken();
         }
     }
 
@@ -115,7 +120,7 @@ export default class JWTAuthenticator implements Authenticator {
     public signRefreshToken = async (data: AggregateRoot) => JWTAuthenticator.sign(
         data,
         app.jwtRefreshPrivateKey,
-        { expiresIn: '1w' } //Refresh tokens last 1 week
+        { } //Refresh tokens don't expire, the user can revoke them manually
     );
 
     /**

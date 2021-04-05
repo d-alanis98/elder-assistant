@@ -1,0 +1,9 @@
+services:
+    #Repositories
+    UserAuthentication.UserAuthenticationRepository:
+        class: ../../../../application/UserAuthentication/infrastructure/persistence/MongoUsersAuthRepository
+        arguments: ["@Shared.DataRepository"]
+    #Use cases
+    UserAuthentication.UseCases.UserAuthentication:
+        class: ../../../../application/UserAuthentication/application/authentication/UserAuthentication
+        arguments: ["@UserAuthentication.UserAuthenticationRepository"]

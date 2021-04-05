@@ -10,7 +10,7 @@ import UserDateOfBirth from './value-objects/UserDateOfBirth';
 import { Nullable } from '../../Shared/domain/Nullable';
 import AggregateRoot from '../../Shared/domain/AggregateRoot';
 //Dependency injection
-import dependenciesReferences from '../../Shared/infrastructure/constants/dependenciesReferences';
+import dependenciesReferences from '../../Shared/infrastructure/Constants/dependenciesReferences';
 
 
 /**
@@ -65,8 +65,8 @@ export default class User extends AggregateRoot {
     );
 
     /**
-     * Returns a primitive value object representation of the instance
-     * @returns {Object} primitive values object
+     * Returns a primitive value object representation of the instance.
+     * @returns {Object} Primitive values object.
      */
     toPrimitives = (): UserPrimitives => {
         let userPrimitives: UserPrimitives = {

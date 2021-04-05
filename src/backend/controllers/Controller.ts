@@ -2,13 +2,13 @@ import httpStatus from 'http-status';
 import { Request, Response } from 'express';
 import { validationResult, ValidationError } from 'express-validator';
 //Domain
-import NotAuthorized from '../../application/Shared/domain/exceptions/NotAuthorized';
 import NotValidParameters from '../../application/Shared/domain/exceptions/NotValidParameters';
+import ErrorWithStatusCode from '../../application/Shared/domain/exceptions/ErrorWithStatusCode';
 import InvalidArgumentError from '../../application/Shared/domain/exceptions/InvalidArgumentError';
 
 /**
  * @author Damián Alanís Ramírez
- * @version 1.1.4
+ * @version 1.3.5
  * @description Base controller class, it contains an abstract method to implement the custom logic of the controller that
  * extends this class.
  * It also provides access to the validation of the request based on validation rules defined in middleware folder.
@@ -42,14 +42,14 @@ export default abstract class Controller {
      * @param {Response} response Express repsonse.
      */
     protected handleBaseExceptions = (error: Error, response: Response) => {
-        console.log({ instanceOfNotAuthorized: error instanceof NotAuthorized})
         if(error instanceof NotValidParameters || error instanceof InvalidArgumentError)
             response.status(httpStatus.BAD_REQUEST).send(
                 error instanceof NotValidParameters
                     ? error.errors
                     : error.message
             );
-        else if(error instanceof NotAuthorized)
+        //If an status code is provided, we handle it
+        else if(error instanceof ErrorWithStatusCode)
             response.status(error.getStatusCode()).send(error.message);
         else response.status(httpStatus.INTERNAL_SERVER_ERROR).send(error.message);
     }

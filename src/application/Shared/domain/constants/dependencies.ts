@@ -6,12 +6,15 @@ export default {
     Authenticator: 'Shared.Authenticator',
     PasswordHasher: 'Shared.PasswordHasher',
     //User
+    //Use cases
     UserFindUseCase: 'Users.UseCases.UserFinder',
     UserCreateUseCase: 'Users.UseCases.UserCreator',
-    UserAuthenticationUseCase: 'Users.UseCases.UserAuthentication',
-    //User controllers
+    //Controllers
     UserFinderController: 'Users.Controllers.UserFinderController',
     UserRegisterController: 'Users.Controllers.UserRegisterController',
-    UserAuthenticationController: 'Users.Controllers.UserAuthenticationController'
+    UserAuthenticationController: 'Users.Controllers.UserAuthenticationController',
+    //UserAuthentication
+    //Use cases
+    UserAuthenticationUseCase: 'UserAuthentication.UseCases.UserAuthentication',
 
 }
