@@ -6,7 +6,7 @@ import AggregateRoot from '../../../domain/AggregateRoot';
 
 /**
  * @author Damián Alanís Ramírez
- * @version 3.3.4
+ * @version 3.4.4
  * @description Repository to access the MongoDB database and specific collection.
  */
 export abstract class MongoRepository<T extends AggregateRoot> {
@@ -49,14 +49,17 @@ export abstract class MongoRepository<T extends AggregateRoot> {
     }
 
     /**
+     * @todo Implement a Query type, and use this type, instead of just Object
      * Searchs a document in the collection by it's id.
      * @param {string} id Resource ID. 
      * @returns 
      */
-    protected findInCollection = async (id: string): Promise<any> => {
+    protected findInCollection = async (id: string | Object): Promise<any> => {
         const collection = await this.collection();
 
-        const document = await collection.findOne({ _id: id.toString() });
+        const document = typeof id === 'string'
+            ? await collection.findOne({ _id: id.toString() })
+            : await collection.findOne(id);
         //We return the user, creating it from primitives, if the document exists, otherwise returning null
         return document;
     }

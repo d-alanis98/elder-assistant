@@ -7,3 +7,7 @@ services:
     UserAuthentication.UseCases.UserAuthentication:
         class: ../../../../application/UserAuthentication/application/authentication/UserAuthentication
         arguments: ["@UserAuthentication.UserAuthenticationRepository"]
+    #Controllers
+    UserAuthentication.Controllers.UserAuthenticationController:
+        class: ../../../../backend/controllers/UserAuthentication/UserAuthenticationController
+        arguments: []

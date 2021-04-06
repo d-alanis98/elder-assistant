@@ -3,10 +3,12 @@ import User from '../../../User/domain/User';
 import UserId from '../../../Shared/domain/modules/User/UserId';
 import UserEmail from '../../../User/domain/value-objects/UserEmail';
 import UserPassword from '../../../User/domain/value-objects/UserPassword';
+import UserWithWrongCredentials from '../../../User/domain/exceptions/UserWithWrongCredentials';
+//User authentication domain
+import RefreshTokenRevoked from '../../domain/exceptions/RefreshTokenRevoked';
 import UserAuthenticationToken from '../../domain/value-objects/UserAuthenticationToken';
 import UserAuthenticationAgent from '../../domain/value-objects/UserAuthenticationAgent';
 import UserAuthenticationEntity from '../../domain/UserAuthentication';
-import UserWithWrongCredentials from '../../../User/domain/exceptions/UserWithWrongCredentials';
 import UserAuthenticationRepository from '../../domain/UserAuthenticationRepository';
 //Use cases
 import UserFinder from '../../../User/application/find/UserFinder';
@@ -18,7 +20,7 @@ import dependencies from '../../../Shared/domain/constants/dependencies';
 
 /**
  * @author Damián Alanís Ramírez
- * @version 3.5.8
+ * @version 3.5.9
  * @description User authentication use case abstraction, it handles the authentication of the user, given an email and a 
  * password in plain text, it makes use of the password hasher to compare the stored hashed password and resolve if the 
  * credentials are correct, throwing an exception if they don't match.
@@ -53,6 +55,30 @@ export default class UserAuthentication {
             throw new UserWithWrongCredentials();
         //We return the authentication token for the user
         return await this.generateTokens(user, userDeviceName, userDeviceType); 
+    }
+
+    /**
+     * Method to get a new authorization token with the user obtained from the refresh
+     * token. We get the user only, and not the token, because it has previously passed 
+     * by the validateRefreshToken middleware in the route, before even reaching the controller
+     * so, if the refresh token is not present or is not valid, an error will be generated and
+     * the execution of the next functions will stop.
+     * @param userWithoutPassword User without password data. 
+     * @returns {string} New authorization token.
+     */
+    public generateAuthenticationToken = async (
+        userWithoutPassword: User,
+        refreshToken: string
+    ): Promise<string> => {
+        //We check if the refresh token is valid (exists in repository)
+        let refreshTokenExistsInRepository: Boolean = await this.dataRepository.hasRefreshToken(refreshToken);
+        //If it is not valid, we throw an exception
+        if(!refreshTokenExistsInRepository)
+            throw new RefreshTokenRevoked();
+        //We use the authenticator to sign and generate the token
+        const authenticator = container.get(dependencies.Authenticator);
+        //We get the resfresh token
+        return await authenticator.signAuthToken(userWithoutPassword);
     }
 
     /**

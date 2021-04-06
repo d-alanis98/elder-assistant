@@ -5,9 +5,10 @@ import { DataRepository } from '../../Shared/infrastructure/Persistence/DataRepo
 
 /**
  * @author Damián Alanís Ramírez
- * @version 1.1.1
+ * @version 2.1.1
  * @description User repository abstraction.
  */
 export default interface UserAuthenticationRepository extends DataRepository<UserAuthentication>{
     //We only need the base methods of DataRepository interface (CRUD operations)
+    hasRefreshToken(token: string): Promise<Boolean>;
 }

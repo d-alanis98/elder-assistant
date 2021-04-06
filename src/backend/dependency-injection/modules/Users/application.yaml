@@ -10,9 +10,6 @@ services:
     Users.Controllers.UserRegisterController:
         class: ../../../../backend/controllers/User/UserRegisterController
         arguments: []
-    Users.Controllers.UserAuthenticationController:
-        class: ../../../../backend/controllers/User/UserAuthenticationController
-        arguments: []
     #Use cases
     Users.UseCases.UserFinder:
         class: ../../../../application/User/application/find/UserFinder

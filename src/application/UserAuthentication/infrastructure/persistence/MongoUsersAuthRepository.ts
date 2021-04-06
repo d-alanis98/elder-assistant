@@ -13,7 +13,7 @@ import AggregateRoot from '../../../Shared/domain/AggregateRoot';
 
 /**
  * @author Damián Alanís Ramírez
- * @version 1.3.3
+ * @version 2.3.3
  * @description Mongo DB repository for the Users collection.
  */
 export class MongoUsersAuthRepository extends MongoRepository<UserAuthentication> implements UserAuthenticationRepository {
@@ -34,14 +34,13 @@ export class MongoUsersAuthRepository extends MongoRepository<UserAuthentication
      * @param {string} id ID of the user.
      * @returns 
      */
-    public search = async (id: UserId): Promise<Nullable<UserAuthentication>> => {
-        const document = await this.findInCollection(id.toString());
+    public search = async (id: UserId | Object): Promise<Nullable<UserAuthentication>> => {
+        const document = (id instanceof UserId)
+            ? await this.findInCollection(id.toString())
+            : await this.findInCollection(id);
         //We return the user, creating it from primitives, if the document exists, otherwise returning null
         return document 
-            ? UserAuthentication.fromPrimitives({
-                _id: id.toString(), 
-                ...document,
-            }) 
+            ? UserAuthentication.fromPrimitives(document) 
             : null;
     }
 
@@ -60,6 +59,19 @@ export class MongoUsersAuthRepository extends MongoRepository<UserAuthentication
      */
     public delete = async (id: UserId): Promise<void> => {
         await this.deleteFromCollection(id.toString());
+    }
+
+    /**
+     * Method to get the boolean indicator of token existance in database.
+     * It invokes the search method, providing an object with the query, instead 
+     * of just the id in string format.
+     * @param token 
+     * @returns 
+     */
+    public hasRefreshToken = async (token: string): Promise<Boolean> => {
+        const record = await this.search({ token: token });
+        //We return the boolean indicator of the token existance in database
+        return record ? true : false;
     }
 
 

@@ -12,9 +12,10 @@ export default {
     //Controllers
     UserFinderController: 'Users.Controllers.UserFinderController',
     UserRegisterController: 'Users.Controllers.UserRegisterController',
-    UserAuthenticationController: 'Users.Controllers.UserAuthenticationController',
     //UserAuthentication
     //Use cases
     UserAuthenticationUseCase: 'UserAuthentication.UseCases.UserAuthentication',
+    //Controllers
+    UserAuthenticationController: 'UserAuthentication.Controllers.UserAuthenticationController',
 
 }
