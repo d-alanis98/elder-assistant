@@ -1,7 +1,7 @@
 //User domain
 import User from './User';
 //Common
-import { DataRepository } from '../../Shared/infrastructure/Persistence/DataRepository';
+import { DataRepository } from '../../Shared/infrastructure/Persistence1/DataRepository';
 
 /**
  * @author Damián Alanís Ramírez
