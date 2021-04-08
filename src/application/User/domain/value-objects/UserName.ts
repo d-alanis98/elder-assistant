@@ -3,7 +3,8 @@ import InvalidArgumentError from '../../../Shared/domain/exceptions/InvalidArgum
 
 /**
  * @author Damián Alanís Ramírez
- * @version 0.1.1
+ * @version 1.1.2
+ * @description User name value object.
  */
 export default class UserName extends StringValueObject {
     public readonly nameLength: number = 25;
