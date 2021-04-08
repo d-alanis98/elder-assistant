@@ -5,7 +5,7 @@ import UserAuthenticationRepository from '../../domain/UserAuthenticationReposit
 //Shared domain
 import { Nullable } from '../../../Shared/domain/Nullable';
 //Infrastructure
-import { MongoRepository } from '../../../Shared/infrastructure/Persistenc/Mongo/MongoRepository';
+import { MongoRepository } from '../../../Shared/infrastructure/Persistence/Mongo/MongoRepository';
 import AggregateRoot from '../../../Shared/domain/AggregateRoot';
 
 

@@ -5,8 +5,8 @@ import UserRepository from '../../domain/UserRepository';
 //Shared domain
 import { Nullable } from '../../../Shared/domain/Nullable';
 //Infrastructure
-import { DataRepository } from '../../../Shared/infrastructure/Persistenc/DataRepository';
-import { MongoRepository } from '../../../Shared/infrastructure/Persistenc/Mongo/MongoRepository';
+import { DataRepository } from '../../../Shared/infrastructure/Persistence/DataRepository';
+import { MongoRepository } from '../../../Shared/infrastructure/Persistence/Mongo/MongoRepository';
 
 /**
  * @author Damián Alanís Ramírez
