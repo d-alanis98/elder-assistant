@@ -10,7 +10,7 @@ import AggregateRoot from '../../Shared/domain/AggregateRoot';
 
 /**
  * @author Damián Alanís Ramírez
- * @version 1.1.1
+ * @version 1.2.2
  * @description IoTDevice entity abstraction.
  */
 export default class IoTDevice extends AggregateRoot {
@@ -94,6 +94,13 @@ export default class IoTDevice extends AggregateRoot {
         new UserId(ownedBy),
         configuration && new IoTDeviceConfiguration(configuration)
     );
+
+    /**
+     * Implementation of the abstract method to get the id of the aggregate.
+     */
+    public get aggregateId(): IoTDeviceId {
+        return this.id;
+    }
 }
 
 //Types

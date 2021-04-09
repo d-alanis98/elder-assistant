@@ -4,7 +4,7 @@ import { AllowedUserTypes } from '../../../application/User/domain/value-objects
 
 /**
  * @author Damián Alanís Ramírez
- * @verison 1.2.5
+ * @verison 1.3.5
  */
 export default class UserValidation {
     /**
@@ -45,7 +45,7 @@ export default class UserValidation {
             .notEmpty()
             .withMessage('User type is required')
             .bail()
-            .custom(value => value === AllowedUserTypes.PRIMARY || value === AllowedUserTypes.SECONDARY)
+            .custom(value => Object.values(AllowedUserTypes).includes(value))
             .withMessage('User type not valid'),
         check('lastName')
             .notEmpty()

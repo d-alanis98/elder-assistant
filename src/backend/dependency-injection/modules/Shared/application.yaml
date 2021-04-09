@@ -26,4 +26,15 @@ services:
     Shared.Authenticator:
         class: ../../../../application/Shared/infrastructure/Authentication/JWTAuthenticator
         arguments: []
+    #ORM
+    #Shared.ORMConfig:
+    #    factory:
+    #        class: ../../../../application/Shared/infrastructure/Persistence/ORM/TypeORM/TypeORMConfigFactory
+    #        method: 'createConfig'
+    #    arguments: []
+    #Shared.ORMRepository:
+    #    factory:
+    #        class: ../../../../application/Shared/infrastructure/Persistence/ORM/TypeORM/TypeORMClientFactory
+    #        method: 'createClient'
+    #    arguments: ['elder-assistant', '@Shared.ORMConfig']
 

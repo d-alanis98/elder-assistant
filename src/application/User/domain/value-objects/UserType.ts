@@ -5,11 +5,12 @@ import UserTypeNotValid from '../exceptions/UserTypeNotValid';
 export enum AllowedUserTypes {
     PRIMARY = 'PRIMARY',
     SECONDARY = 'SECONDARY',
+    ADMINISTRATOR = 'ADMINISTRATOR'
 }
 
 /**
  * @author Damián Alanís Ramírez
- * @version 0.1.1
+ * @version 1.2.1
  */
 export default class UserType extends EnumValueObject<string> {
     

@@ -8,7 +8,7 @@ import AggregateRoot from '../../Shared/domain/AggregateRoot';
 
 /**
  * @author Damian Alanis Ramirez
- * @version 3.3.5
+ * @version 3.4.6
  * @description User authentication unit abstraction.
  */
 export default class UserAuthentication extends AggregateRoot {
@@ -77,6 +77,13 @@ export default class UserAuthentication extends AggregateRoot {
         userId: this.id.toString(),
         issuedAt: this.issuedAtDate.toString(),
     });
+
+    /**
+     * Implementation of the abstract method to get the id of the aggregate.
+     */
+    public get aggregateId(): UserId {
+        return this.id;
+    }
 }
 
 export interface UserAuthenticationParameters {

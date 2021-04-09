@@ -145,6 +145,13 @@ export default class User extends AggregateRoot {
             ? new UserPassword(passwordPrimitive)
             : null
     );
+
+    /**
+     * Implementation of the abstract method to get the aggregate id.
+     */
+    public get aggregateId(): UserId {
+        return this.id;
+    }
 }
 
 export interface UserParameters {

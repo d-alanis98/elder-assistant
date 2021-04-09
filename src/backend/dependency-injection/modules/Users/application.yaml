@@ -2,7 +2,7 @@ services:
     #Repositories
     Users.UserRepository:
         class: ../../../../application/User/infrastructure/Persistence/MongoUsersRepository
-        arguments: ["@Shared.DataRepository"]
+        arguments: ['@Shared.DataRepository']
     #Controllers
     Users.Controllers.UserFinderController:
         class: ../../../../backend/controllers/User/UserFinderController
@@ -13,7 +13,7 @@ services:
     #Use cases
     Users.UseCases.UserFinder:
         class: ../../../../application/User/application/find/UserFinder
-        arguments: ["@Users.UserRepository"]
+        arguments: ['@Users.UserRepository']
     Users.UseCases.UserCreator:
         class: ../../../../application/User/application/create/UserCreator
-        arguments: ["@Users.UserRepository"]
+        arguments: ['@Users.UserRepository']

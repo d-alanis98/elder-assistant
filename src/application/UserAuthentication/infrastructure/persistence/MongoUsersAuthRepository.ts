@@ -6,14 +6,11 @@ import UserAuthenticationRepository from '../../domain/UserAuthenticationReposit
 import { Nullable } from '../../../Shared/domain/Nullable';
 //Infrastructure
 import { MongoRepository } from '../../../Shared/infrastructure/Persistence/Mongo/MongoRepository';
-import AggregateRoot from '../../../Shared/domain/AggregateRoot';
-
-
 
 
 /**
  * @author Damián Alanís Ramírez
- * @version 2.3.3
+ * @version 2.3.4
  * @description Mongo DB repository for the Users collection.
  */
 export class MongoUsersAuthRepository extends MongoRepository<UserAuthentication> implements UserAuthenticationRepository {

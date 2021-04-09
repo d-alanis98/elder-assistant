@@ -9,6 +9,9 @@ import UserLastName from '../../domain/value-objects/UserLastName';
 import UserDateOfBirth from '../../domain/value-objects/UserDateOfBirth';
 //Domain exceptions
 import UserAlreadyExists from '../../domain/exceptions/UserAlreadyExists';
+//Domain events
+import UserCreated from '../../domain/events/UserCreated';
+import DomainEventsHandler from '../../../Shared/domain/events/DomainEventsHandler';
 //Repositories
 import UserRepository from '../../domain/UserRepository';
 //Helpers
@@ -20,7 +23,7 @@ import dependencies from '../../../Shared/domain/constants/dependencies';
 
 /**
  * @author Damián Alanís Ramírez
- * @version 2.3.2
+ * @version 2.5.3
  * @description Create user use case abstraction. It handles the validation of user non existance in the repository, throwing
  * and exception when the user already exists and creating a new User instance otherwise, as well as saving it to the repository.
  */
@@ -67,6 +70,10 @@ export default class UserCreator {
         );
         //We save the user in the repository
         await this.dataRepository.create(user);
+        //We create a UserCreated event
+        user.addDomainEvent(new UserCreated(user));
+        //We dispatch the event
+        DomainEventsHandler.dispatchEventsForAggregate(user.id);
         //Finally, we return the user instance
         return user;
     }
