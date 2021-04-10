@@ -16,7 +16,7 @@ import dependencies from '../../../application/Shared/domain/constants/dependenc
 
 /**
  * @author Damián Alanís Ramírez
- * @version 1.4.3
+ * @version 1.5.3
  * @description Controller for the register use case.
  */
 export default class UserRegisterController extends Controller {
@@ -35,8 +35,10 @@ export default class UserRegisterController extends Controller {
             const userCreator: UserCreator = container.get(dependencies.UserCreateUseCase);
             //We create a new user
             const user: User = await userCreator.run({ name, email, type, lastName, password, dateOfBirth });
-            //We send the response with the user as JSON body
-            response.status(httpStatus.OK).send(user);
+            //We get the user data without the password
+            const userWithoutPassword: User = User.getUserWithoutPassword(user);
+            //We send the response with the user data in JSON
+            response.status(httpStatus.OK).json(userWithoutPassword.toPrimitives());
         } catch(error) {
             this.handleExceptions(error, response);
         }
@@ -57,4 +59,5 @@ export default class UserRegisterController extends Controller {
         const logger: Logger = container.get(dependencies.Logger);
         logger.error(error);
     }
+
 }

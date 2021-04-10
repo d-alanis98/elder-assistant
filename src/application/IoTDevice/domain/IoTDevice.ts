@@ -10,14 +10,14 @@ import AggregateRoot from '../../Shared/domain/AggregateRoot';
 
 /**
  * @author Damián Alanís Ramírez
- * @version 1.2.2
+ * @version 2.4.3
  * @description IoTDevice entity abstraction.
  */
 export default class IoTDevice extends AggregateRoot {
     readonly id: IoTDeviceId;
     readonly name: IoTDeviceName;
     readonly type: IoTDeviceType;
-    readonly ownedBy: UserId;
+    readonly ownedBy?: UserId;
     readonly configuration?: IoTDeviceConfiguration;
 
 
@@ -25,7 +25,7 @@ export default class IoTDevice extends AggregateRoot {
         id: IoTDeviceId,
         name: IoTDeviceName,
         type: IoTDeviceType,
-        ownedBy: UserId,
+        ownedBy?: UserId,
         configuration?: IoTDeviceConfiguration
     ) {
         super();
@@ -45,8 +45,9 @@ export default class IoTDevice extends AggregateRoot {
             _id: this.id.toString(),
             name: this.name.toString(),
             type: this.type.value,
-            ownedBy: this.ownedBy.toString(),
         }
+        if(this.ownedBy)
+            primitiveValues.ownedBy = this.ownedBy.toString();
         if (this.configuration)
             primitiveValues.configuration = this.configuration;
         return primitiveValues;
@@ -66,7 +67,7 @@ export default class IoTDevice extends AggregateRoot {
         id: IoTDeviceId,
         name: IoTDeviceName,
         type: IoTDeviceType,
-        ownedBy: UserId,
+        ownedBy?: UserId,
         configuration?: IoTDeviceConfiguration
     ): IoTDevice => new IoTDevice(
         id,
@@ -91,7 +92,7 @@ export default class IoTDevice extends AggregateRoot {
         new IoTDeviceId(_id),
         new IoTDeviceName(name),
         new IoTDeviceType(type),
-        new UserId(ownedBy),
+        ownedBy ? new UserId(ownedBy) : undefined,
         configuration && new IoTDeviceConfiguration(configuration)
     );
 
@@ -108,7 +109,7 @@ export interface IoTDeviceParameters {
     id: IoTDeviceId;
     name: IoTDeviceName;
     type: IoTDeviceType;
-    ownedBy: UserId;
+    ownedBy?: UserId;
     configuration?: IoTDeviceConfiguration;
 };
 
@@ -116,6 +117,11 @@ export interface IoTDevicePrimitives {
     _id: string;
     name: string;
     type: string;
-    ownedBy: string;
+    ownedBy?: string;
     configuration?: Object;
 };
+
+export interface NewIoTDevicePrimitives {
+    name: string;
+    type: string;
+}

@@ -1,0 +1,25 @@
+services:
+    #Repositories
+    IoTDevice.IoTDeviceRepository:
+        class: ../../../../application/IoTDevice/infrastructure/persistence/MongoIoTDeviceRepository
+        arguments: ['@Shared.DataRepository']
+    #Controllers
+    IoTDevice.IoTDeviceCreateController:
+        class: ../../../../backend/controllers/IoTDevice/IoTDeviceCreateController
+        arguments: []
+    IoTDevice.IoTDeviceFindController:
+        class: ../../../../backend/controllers/IoTDevice/IoTDeviceFindController
+        arguments: []
+    IoTDevice.IoTDeviceLinkController:
+        class: ../../../../backend/controllers/IoTDevice/IoTDeviceLinkController
+        arguments: []
+    #Use cases
+    IoTDevice.CreateIoTDevice:
+        class: ../../../../application/IoTDevice/application/create/CreateIoTDevice
+        arguments: ['@IoTDevice.IoTDeviceRepository']
+    IoTDevice.FindIoTDevice:
+        class: ../../../../application/IoTDevice/application/find/FindIoTDevice
+        arguments: ['@IoTDevice.IoTDeviceRepository']
+    IoTDevice.LinkIoTDevice:
+        class: ../../../../application/IoTDevice/application/link/LinkIoTDevice
+        arguments: ['@IoTDevice.IoTDeviceRepository']

@@ -27,8 +27,10 @@ export default class UserFinderController extends Controller {
         try {
             const userFinder: UserFinder = container.get(dependencies.UserFindUseCase);
             const user: User = await userFinder.find(id);
+            //We get the user without the password
+            const userWithoutPassword: User = User.getUserWithoutPassword(user);
             //We send the response with the user data in JSON
-            response.status(httpStatus.OK).json(user);
+            response.status(httpStatus.OK).json(userWithoutPassword.toPrimitives());
         } catch(error) {
             if(error instanceof UserNotFound)
                 response.status(httpStatus.NOT_FOUND).send(error.message);

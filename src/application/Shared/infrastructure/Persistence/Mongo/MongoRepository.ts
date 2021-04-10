@@ -6,7 +6,7 @@ import AggregateRoot from '../../../domain/AggregateRoot';
 
 /**
  * @author Damián Alanís Ramírez
- * @version 3.4.4
+ * @version 3.6.7
  * @description Repository to access the MongoDB database and specific collection.
  */
 export abstract class MongoRepository<T extends AggregateRoot> {
@@ -60,8 +60,22 @@ export abstract class MongoRepository<T extends AggregateRoot> {
         const document = typeof id === 'string'
             ? await collection.findOne({ _id: id.toString() })
             : await collection.findOne(id);
-        //We return the user, creating it from primitives, if the document exists, otherwise returning null
+        //We return the document
         return document;
+    }
+
+    /**
+     * Method to get all the records in a collection, by string id or object query.
+     * @param {string|Object} id Resource ID or query.
+     * @returns 
+     */
+    protected findAllInCollection = async (id: string | Object): Promise<any[]> => {
+        const collection = await this.collection();
+
+        const document = typeof id === 'string'
+            ? await collection.find({ _id: id })
+            : await collection.find(id);
+        return document.toArray();
     }
 
     /**

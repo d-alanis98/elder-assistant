@@ -19,3 +19,17 @@ export default {
     UserAuthenticationController: 'UserAuthentication.Controllers.UserAuthenticationController',
 
 }
+
+//IoTDevice entity
+export const iotDeviceDependencies = {
+    UseCases: {
+        FindIoTDevice: 'IoTDevice.FindIoTDevice',
+        LinkIoTDevice: 'IoTDevice.LinkIoTDevice',
+        CreateIoTDevice: 'IoTDevice.CreateIoTDevice',
+    },
+    Controllers: {
+        IoTDeviceFindController: 'IoTDevice.IoTDeviceFindController',
+        IoTDeviceLinkController: 'IoTDevice.IoTDeviceLinkController',
+        IoTDeviceCreateController: 'IoTDevice.IoTDeviceCreateController',
+    }
+};
