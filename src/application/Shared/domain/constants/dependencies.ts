@@ -26,10 +26,14 @@ export const iotDeviceDependencies = {
         FindIoTDevice: 'IoTDevice.FindIoTDevice',
         LinkIoTDevice: 'IoTDevice.LinkIoTDevice',
         CreateIoTDevice: 'IoTDevice.CreateIoTDevice',
+        SearchIoTDeviceData: 'IoTDevice.SearchIoTDeviceData',
+        CreateIoTDeviceData: 'IoTDevice.CreateIoTDeviceData',
     },
     Controllers: {
         IoTDeviceFindController: 'IoTDevice.IoTDeviceFindController',
         IoTDeviceLinkController: 'IoTDevice.IoTDeviceLinkController',
         IoTDeviceCreateController: 'IoTDevice.IoTDeviceCreateController',
+        IoTDeviceDataSearchController: 'IoTDevice.IoTDeviceDataSearchController',
+        IoTDeviceDataCreateController: 'IoTDevice.IoTDeviceDataCreateController'
     }
 };

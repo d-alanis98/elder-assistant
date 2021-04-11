@@ -1,8 +1,8 @@
 //Device domain
-import IoTDevice, { NewIoTDevicePrimitives } from "../../domain/IoTDevice";
-import IoTDeviceId from "../../domain/value-objects/IoTDeviceId";
+import IoTDevice, { NewIoTDevicePrimitives } from '../../domain/IoTDevice';
+import IoTDeviceId from '../../domain/value-objects/IoTDeviceId';
 //Repository
-import { IoTDeviceRepository } from "../../domain/IoTDeviceRepository";
+import { IoTDeviceRepository } from '../../domain/IoTDeviceRepository';
 
 /**
  * @author Damián Alanís Ramírez

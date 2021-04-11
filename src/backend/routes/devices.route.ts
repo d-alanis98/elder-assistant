@@ -6,10 +6,13 @@ import { iotDeviceDependencies } from '../../application/Shared/domain/constants
 import UserAuthorization from '../middleware/User/UserAuthorization';
 import UserAuthentication from '../middleware/User/UserAuthentication';
 import IoTDeviceValidation from '../middleware/IoTDevice/IoTDeviceValidation';
+import IoTDeviceDataValidation from '../middleware/IoTDeviceData/IoTDeviceDataValidation';
 //Controllers
-import IoTDeviceCreateController from '../controllers/IoTDevice/IoTDeviceCreateController';
 import IoTDeviceFindController from '../controllers/IoTDevice/IoTDeviceFindController';
 import IoTDeviceLinkController from '../controllers/IoTDevice/IoTDeviceLinkController';
+import IoTDeviceCreateController from '../controllers/IoTDevice/IoTDeviceCreateController';
+import IoTDeviceDataCreateController from '../controllers/IoTDeviceData/IoTDeviceDataCreateController';
+import IoTDeviceDataSearchController from '../controllers/IoTDeviceData/IoTDeviceDataSearchController';
 
 
 export const register = (router: Router) => {
@@ -27,15 +30,22 @@ export const register = (router: Router) => {
         iotDeviceCreateController.run.bind(iotDeviceCreateController)
     );
 
+    /**
+     * @todo Add validateAllowedRoles.
+     */
     //Find device by id
     const iotDeviceFindController: IoTDeviceFindController = container.get(iotDeviceDependencies.Controllers.IoTDeviceFindController);
     router.get(
         '/iot/device/:deviceId',
         UserAuthentication.validateAuthToken,
-        //UserAuthorization.validateAllowedRole,
+        //UserAuthorization.validateAllowedRoles,
         iotDeviceFindController.run.bind(iotDeviceFindController)
     );
 
+    /**
+     * @todo Replace validatePrimaryRole middleware with validateAllowedRoles, which includes the primary user and
+     * the secondary users with permission.
+     */
     //Get devices owned by a user
     router.get(
         '/iot/devices',
@@ -44,6 +54,10 @@ export const register = (router: Router) => {
         iotDeviceFindController.findByUserId.bind(iotDeviceFindController)
     );
 
+    /**
+     * @todo Verify that device was not previously owned by someone.
+     * @todo Generate JWT and refresh token for devices after device link and emmit it via broadcast or UDP.
+     */
     //Link device to user
     const iotDeviceLinkController: IoTDeviceLinkController = container.get(iotDeviceDependencies.Controllers.IoTDeviceLinkController);
     router.post(
@@ -51,5 +65,31 @@ export const register = (router: Router) => {
         UserAuthentication.validateAuthToken,
         UserAuthorization.validatePrimaryRole,
         iotDeviceLinkController.run.bind(iotDeviceLinkController)
+    );
+
+    /**
+     * @todo, Validate device JWT instead of user one, because the request is going to be made from the IoT device. Also,
+     * remove the validation of primary role.
+     */
+    //Add IoTDevice data record
+    const iotDeviceDataCreateController: IoTDeviceDataCreateController = container.get(iotDeviceDependencies.Controllers.IoTDeviceDataCreateController);
+    router.post(
+        '/iot/device/:deviceId/data',
+        IoTDeviceDataValidation.validateBody(),
+        UserAuthentication.validateAuthToken,
+        UserAuthorization.validatePrimaryRole,
+        iotDeviceDataCreateController.run.bind(iotDeviceDataCreateController)
+    );
+
+    /**
+     * @todo Add validateAllowedRoles.
+     */
+    //Get IoT device data records
+    const iotDeviceDataSearchController: IoTDeviceDataSearchController = container.get(iotDeviceDependencies.Controllers.IoTDeviceDataSearchController);
+    router.get(
+        '/iot/device/:deviceId/data',
+        UserAuthentication.validateAuthToken,
+        //UserAuthorization.validateAllowedRoles,
+        iotDeviceDataSearchController.run.bind(iotDeviceDataSearchController)
     );
 }

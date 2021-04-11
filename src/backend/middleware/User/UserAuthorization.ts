@@ -32,6 +32,19 @@ export default class UserAuthorization {
         UserAuthorization.validateRole(request, response, next, AllowedUserTypes.PRIMARY);
     }
 
+    /**
+     * @todo
+     * Method to determine if a user has roles to see a protected resource. The valid roles are determined by 2 conditions:
+     * - If the user is of PRIMARY type, it's id must be the same as the id of the owner of the requested resource (expressed in the URL).
+     * - If the user is of SECONDARY type, it must have the specified roles assigned by the owner of the resource (expressed by it's id in the URL). 
+     * @param {RequestWithUser} request Express request with user data.
+     * @param {Response} response Express response. 
+     * @param {NextFunction} next Express next function.
+     */
+    static validateAllowedRoles = (roles: string[]) => (request: RequestWithUser, response: Response, next: NextFunction): void => {
+
+    }
+
     //Helpers (internal use)
 
     /**

@@ -4,7 +4,8 @@ import { AllowedUserTypes } from '../../../application/User/domain/value-objects
 
 /**
  * @author Damián Alanís Ramírez
- * @verison 1.3.5
+ * @version 1.3.6
+ * @description Middlewares to validate User requests.
  */
 export default class UserValidation {
     /**
