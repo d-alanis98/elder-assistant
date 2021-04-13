@@ -3,7 +3,7 @@ import DateValueObject from '../../../Shared/domain/value-object/DateValueObject
 
 /**
  * @author Damian Alanis Ramirez
- * @version 1.1.1
+ * @version 1.2.1
  * @description IoT device data date value object.
  */
 export default class IoTDeviceDataDate extends DateValueObject {
@@ -15,4 +15,10 @@ export default class IoTDeviceDataDate extends DateValueObject {
      * @returns The ISO string date
      */
     toString = (): string => this.toISOString();
+
+    /**
+     * Method to return a value object instance with the current date.
+     * @returns An instance of the value object with the current date.
+     */
+    static current = () => new IoTDeviceDataDate(DateValueObject.current());
 }

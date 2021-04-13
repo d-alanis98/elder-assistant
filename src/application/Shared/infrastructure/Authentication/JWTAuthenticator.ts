@@ -11,12 +11,12 @@ import app from '../../../../configuration/app';
 
 /**
  * @author Dmaián Alanís Ramírez
- * @version 1.6.8
+ * @version 1.7.8
  */
 export default class JWTAuthenticator implements Authenticator {
 
     private jwtOptions: Object;
-    private readonly expirationDate: string = '10m';
+    private readonly expirationDate: string = '1d';
 
     constructor(jwtOptions: Object = { }) {
         this.jwtOptions = {

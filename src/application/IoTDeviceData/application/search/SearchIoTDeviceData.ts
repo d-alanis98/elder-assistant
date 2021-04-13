@@ -9,7 +9,7 @@ import { Nullable } from '../../../Shared/domain/Nullable';
 
 /**
  * @author Damián Alanís Ramírez
- * @version 1.3.2
+ * @version 2.4.3
  * @description Search IoTDeviceData records use case.
  */
 export default class SearchIoTDeviceData {
@@ -24,9 +24,16 @@ export default class SearchIoTDeviceData {
      * @param {string} deviceId IoT device ID.
      * @returns 
      */
-    byDeviceId = async (deviceId: string) => {
-        //We search all the records in the repository
-        const deviceDataRecords: Nullable<IoTDeviceData[]> = await this.iotDeviceDataRepository.searchAll({ deviceId });
+    byDeviceId = async ({ 
+        limit,
+        deviceId, 
+        startingAt,
+    }: SearchParameters) => {
+        //We search all the records in the repository with pagination
+        const deviceDataRecords: Nullable<any> = await this.iotDeviceDataRepository.searchAllPaginated(
+            { deviceId },
+            { limit, startingAt } //We provide the starting point, derivated from the pagination, to get the consequent page
+        );
         if(!deviceDataRecords)
             throw new UnexistingIoTDeviceData();
         //We return the data records
@@ -44,4 +51,11 @@ export default class SearchIoTDeviceData {
             deviceData.toPrimitives()
         ))
     );
+}
+
+
+interface SearchParameters {
+    limit: number | undefined;
+    deviceId: string;
+    startingAt: string | undefined;
 }

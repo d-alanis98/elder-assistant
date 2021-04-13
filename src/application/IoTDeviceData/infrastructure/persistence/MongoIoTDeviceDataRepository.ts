@@ -7,12 +7,11 @@ import { IoTDeviceDataRepository } from '../../domain/IoTDeviceDataRepository';
 import { Nullable } from '../../../Shared/domain/Nullable';
 //Infrastructure
 import { MongoRepository } from '../../../Shared/infrastructure/Persistence/Mongo/MongoRepository';
-
-
+import { defaultQueryParameters, QueryParameters } from '../../../Shared/infrastructure/Persistence/DataRepository';
 
 /**
  * @author Damián Alanís Ramírez
- * @version 1.1.1
+ * @version 2.3.2
  * @description Mongo DB repository for the IoTDeviceData collection.
  */
 export default class MongoIoTRepository 
@@ -49,20 +48,52 @@ export default class MongoIoTRepository
      * Method to get all the records in the repository, based on a query, wheter by ID or a different query represented with
      * an object.
      * @param {IoTDeviceDataId|Object} query Query, wheter the ID of the resoruce of a query represented in an object.
+     * @param {QueryParamaters} queryParameters Extra parameters like limit, order, etc.
      * @returns 
      */
-    public searchAll = async (query: IoTDeviceDataId | Object): Promise<Nullable<IoTDeviceData[]>> => {
+    public searchAll = async (query: Object, queryParameters?: QueryParameters): Promise<Nullable<IoTDeviceData[]>> => {
         //We get the id or query
-        const id: string | Object = query instanceof IoTDeviceDataId
-            ? query.toString()
-            : query;
         //We get the documents
-        const documents = await this.findAllInCollection(id);
+        const documents = await this.findAllInCollection(
+            query, 
+            queryParameters || { order: { issuedAt: -1 } }
+        );
         //We return the items
         return documents 
             ? documents.map(document => IoTDeviceData.fromPrimitives(document))
             : null;
     }
+
+
+    /**
+     * Method to get all the results in a paginated way, with the following structure:
+     * @example
+     * {
+     *  data: [...], [...], ...,
+     *  next: 'next_value_uri'
+     * }
+     * @note The next value must be the startingAt parameter of the next request to get the 'next' page.
+     * @param {Object} filters The filters to apply to the query (i.e: get data by deviceID).
+     * @param {QueryParameters} queryParameters Parameters for the pagination.
+     * @returns 
+     */
+    public searchAllPaginated = async (filters: Object, queryParameters?: QueryParameters): Promise<Nullable<any>> => {
+        const documents = await this.findAllPaginated(
+            queryParameters 
+                ? { ...defaultQueryParameters, ...queryParameters } //We merge the parameters (with the provided parameters overriding the default ones if they exist)
+                : defaultQueryParameters, 
+            filters
+        );
+        //We return the items
+        return documents 
+            ? ({
+                data: documents.data.map(document => IoTDeviceData.fromPrimitives(document)),
+                next: documents.next
+            })
+            : null;
+    }
+
+
 
     /**
      * Updates a device data record.
