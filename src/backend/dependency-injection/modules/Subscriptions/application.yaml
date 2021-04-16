@@ -1,0 +1,19 @@
+services:
+    #Repositories
+    Subscriptions.SubscriptionsRepository:
+        class: ../../../../application/Subscriptions/infrastructure/persistence/MongoSubscriptionsRepository
+        arguments: ['@Shared.DataRepository']
+    #Use cases
+    Subscriptions.FindSubscription:
+        class: ../../../../application/Subscriptions/application/find/FindSubscription
+        arguments: ['@Subscriptions.SubscriptionsRepository']
+    Subscriptions.CreateSubscription:
+        class: ../../../../application/Subscriptions/application/create/CreateSubscription
+        arguments: ['@Subscriptions.SubscriptionsRepository']
+    #Controllers
+    Subscriptions.FindSubscriptionController:
+        class: ../../../../backend/controllers/Subscriptions/FindSubscriptionController
+        arguments: []
+    Subscriptions.CreateSubscriptionController:
+        class: ../../../../backend/controllers/Subscriptions/CreateSubscriptionController
+        arguments: []

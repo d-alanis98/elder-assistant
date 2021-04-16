@@ -37,3 +37,15 @@ export const iotDeviceDependencies = {
         IoTDeviceDataCreateController: 'IoTDevice.IoTDeviceDataCreateController'
     }
 };
+
+//Subscriptions entity
+export const subscriptionsDependencies = {
+    UseCases: {
+        FindSubscription: 'Subscriptions.FindSubscription',
+        CreateSubscription: 'Subscriptions.CreateSubscription',
+    },
+    Controllers: {
+        FindSubscriptionController: 'Subscriptions.FindSubscriptionController',
+        CreateSubscriptionController: 'Subscriptions.CreateSubscriptionController'
+    }
+}
