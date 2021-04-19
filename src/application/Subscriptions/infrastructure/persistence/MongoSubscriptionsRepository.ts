@@ -10,11 +10,11 @@ import { MongoRepository } from '../../../Shared/infrastructure/Persistence/Mong
 
 /**
  * @author Damián Alanís Ramírez
- * @version 1.2.1
+ * @version 1.2.2
  * @description Mongo DB repository for the Subscription collection.
  */
-export default class MongoSubscriptionsRepository 
-    extends MongoRepository<Subscription> 
+export default class MongoSubscriptionsRepository
+    extends MongoRepository<Subscription>
     implements SubscriptionRepository {
     //Collection to be used in the operations across the use cases
     readonly COLLECTION = 'Subscriptions';
@@ -59,7 +59,7 @@ export default class MongoSubscriptionsRepository
      * @param {Subscription} subscription The subscription instance with the data to save 
      * @returns 
      */
-     public update = async (subscription: Subscription): Promise<void> => {
+    public update = async (subscription: Subscription): Promise<void> => {
         return await this.updateInCollection(subscription.id.toString(), subscription);
     }
 
@@ -67,7 +67,7 @@ export default class MongoSubscriptionsRepository
      * Deletes a subscription from the repository.
      * @param {SubscriptionId} id ID of the subscription.
      */
-     public delete = async (id: SubscriptionId): Promise<void> => {
+    public delete = async (id: SubscriptionId): Promise<void> => {
         await this.deleteFromCollection(id.toString());
     }
 

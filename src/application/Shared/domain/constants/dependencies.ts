@@ -49,3 +49,13 @@ export const subscriptionsDependencies = {
         CreateSubscriptionController: 'Subscriptions.CreateSubscriptionController'
     }
 }
+
+//Chat entity
+export const chatDependencies = {
+    UseCases: {
+        CreateChat: 'Chat.CreateChat',
+    },
+    Controllers: {
+        CreateChatController: 'Chat.CreateChatController'
+    }
+}

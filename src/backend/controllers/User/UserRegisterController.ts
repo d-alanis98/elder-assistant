@@ -4,19 +4,22 @@ import httpStatus from 'http-status';
 import User from '../../../application/User/domain/User';
 import UserCreator from '../../../application/User/application/create/UserCreator';
 import UserAlreadyExists from '../../../application/User/domain/exceptions/UserAlreadyExists';
+//Events
+import UserCreated from '../../../application/User/domain/events/UserCreated';
+//Event handlers
+import OnUserCreated from '../../../application/User/domain/handlers/OnUserCreated';
 //Shared
 import Logger from '../../../application/Shared/domain/Logger';
 //Base controller
 import Controller from '../Controller';
 //Dependency injection
 import container from '../../dependency-injection';
-//Constants
 import dependencies from '../../../application/Shared/domain/constants/dependencies';
 
 
 /**
  * @author Damián Alanís Ramírez
- * @version 1.5.3
+ * @version 1.6.3
  * @description Controller for the register use case.
  */
 export default class UserRegisterController extends Controller {
@@ -59,5 +62,13 @@ export default class UserRegisterController extends Controller {
         const logger: Logger = container.get(dependencies.Logger);
         logger.error(error);
     }
+
+    /**
+     * We register the event handlers for the user creation.
+     */
+    protected registerEventHandlers() {
+        this.onDomainEvent(UserCreated.name, (event) => OnUserCreated.handle(event));
+    }
+
 
 }

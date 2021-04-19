@@ -4,3 +4,4 @@ imports:
     - { resource: ./modules/IoTDevice/application.yaml }
     - { resource: ./modules/UserAuthentication/application.yaml }
     - { resource: ./modules/Subscriptions/application.yaml }
+    - { resource: ./modules/Chat/application.yaml }
