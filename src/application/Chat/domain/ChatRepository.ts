@@ -13,6 +13,6 @@ import { DataRepository } from '../../Shared/infrastructure/Persistence/DataRepo
  * @description Interface that specifies the contract for the ChatRepository implementation.
  */
 export default interface ChatRepository extends DataRepository<Chat> {
-    //Ee use the base CRUD operations of data repository, but we define the protorype for the search method
+    //We use the base CRUD operations of data repository, but we define the protorype for the search method
     search(id: ChatId | Object): Promise<Nullable<Chat>>;
 }

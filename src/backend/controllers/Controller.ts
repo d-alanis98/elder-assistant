@@ -9,7 +9,7 @@ import DomainEventsHandler from '../../application/Shared/domain/events/DomainEv
 
 /**
  * @author Damián Alanís Ramírez
- * @version 2.6.8
+ * @version 2.7.8
  * @description Base controller class, it contains an abstract method to implement the custom logic of the controller that
  * extends this class.
  * It also provides access to the validation of the request based on validation rules defined in middleware folder. As well
@@ -17,7 +17,7 @@ import DomainEventsHandler from '../../application/Shared/domain/events/DomainEv
  */
 export default abstract class Controller {
 
-    protected constructor() {
+    constructor() {
         //If the registerEventHandlers method is implemented, we execute it.
         if(this.registerEventHandlers)
             this.registerEventHandlers();

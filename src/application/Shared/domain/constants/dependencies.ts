@@ -59,3 +59,13 @@ export const chatDependencies = {
         CreateChatController: 'Chat.CreateChatController'
     }
 }
+
+//Chat messages entity
+export const chatMessageDependencies = {
+    UseCases: {
+        CreateChatMessage: 'ChatMessage.CreateChatMessage'
+    },
+    Controllers: {
+        ChatMessageController: 'ChatMessage.ChatMessageController',
+    }
+}

@@ -1,4 +1,5 @@
 services:
+    #CHAT
     #Repositories
     Chat.ChatRepository:
         class: ../../../../application/Chat/infrastructure/persistence/MongoChatRepository
@@ -11,3 +12,17 @@ services:
     #Chat.CreateChatController:
         #class: ../../../../backend/controllers/Chat/CreateChatController
         #arguments: []
+    #CHAT MESSAGE
+    #Repository
+    ChatMessage.ChatMessageRepository:
+        class: ../../../../application/ChatMessage/infrastructure/persistence/MongoChatMessageRepository
+        arguments: ['@Shared.DataRepository']
+    #Use cases
+    ChatMessage.CreateChatMessage:
+        class: ../../../../application/ChatMessage/application/create/CreateChatMessage
+        arguments: ['@ChatMessage.ChatMessageRepository']
+    #Controllers
+    ChatMessage.ChatMessageController:
+        class: ../../../../backend/controllers/Chat/ChatMessageController
+        arguments: []
+

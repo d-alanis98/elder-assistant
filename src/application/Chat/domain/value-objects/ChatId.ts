@@ -13,7 +13,7 @@ export default class ChatId extends Uuid {
 
     /**
      * Method to get an instance of ChatId with a random UUID.
-     * @returns Instance of SubscriptionId value object.
+     * @returns Instance of ChatId value object.
      */
      static random = () => new ChatId(
         Uuid.random().value
