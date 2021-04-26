@@ -54,7 +54,10 @@ export default class UserAuthentication {
         if(!(await this.comparePasswords(userPassword, storedPassword)))
             throw new UserWithWrongCredentials();
         //We return the authentication token for the user
-        return await this.generateTokens(user, userDeviceName, userDeviceType); 
+        return {
+            user: User.getUserWithoutPassword(user).toPrimitives(),
+            ...await this.generateTokens(user, userDeviceName, userDeviceType),
+        }
     }
 
     /**

@@ -6,6 +6,7 @@ import httpStatus from 'http-status';
 import express, { Request, Response, Express, Router as ExpressRouter } from 'express';
 import Router from 'express-promise-router';
 //Middlewares
+import cors from 'cors';
 import helmet from 'helmet';
 import compress from 'compression';
 import errorHandler from 'errorhandler';
@@ -58,6 +59,9 @@ export default class Server {
         this.express.use(helmet.hidePoweredBy());
         this.express.use(helmet.frameguard({ action: 'deny' }));
         this.express.use(compress());
+        this.express.use(cors({
+            origin: 'http://localhost:19006'
+        }))
     }
 
     /**
