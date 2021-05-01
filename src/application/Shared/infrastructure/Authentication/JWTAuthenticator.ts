@@ -16,7 +16,7 @@ import app from '../../../../configuration/app';
 export default class JWTAuthenticator implements Authenticator {
 
     private jwtOptions: Object;
-    private readonly expirationDate: string = '1d';
+    private readonly expirationDate: string = '10m';
 
     constructor(jwtOptions: Object = { }) {
         this.jwtOptions = {

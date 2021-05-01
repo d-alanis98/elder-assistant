@@ -60,8 +60,9 @@ export default class Server {
         this.express.use(helmet.frameguard({ action: 'deny' }));
         this.express.use(compress());
         this.express.use(cors({
-            origin: 'http://localhost:19006'
-        }))
+            origin: true, 
+            credentials: true
+        }));
     }
 
     /**
