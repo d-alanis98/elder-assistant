@@ -1,12 +1,15 @@
 //Device domain
 import IoTDevice, { NewIoTDevicePrimitives } from '../../domain/IoTDevice';
 import IoTDeviceId from '../../domain/value-objects/IoTDeviceId';
+import IoTDeviceType from '../../domain/value-objects/IoTDeviceType';
+import IoTDeviceEventKeys from '../../domain/value-objects/IoTDeviceEventKeys';
 //Repository
 import { IoTDeviceRepository } from '../../domain/IoTDeviceRepository';
 
+
 /**
  * @author Damián Alanís Ramírez
- * @version 1.1.1
+ * @version 2.3.1
  * @description Create Iot device use case abstraction.
  */
 export default class CreateIoTDevice {
@@ -19,10 +22,15 @@ export default class CreateIoTDevice {
 
     run = async ({
         name,
-        type
+        type,
+        eventKeys
     }: NewIoTDevicePrimitives) => {
         //We create a new IoTDevice instance with a random ID.
-        const device: IoTDevice = this.getNewDeviceWithId({ name, type });
+        const device: IoTDevice = this.getNewDeviceWithId({ 
+            name, 
+            type, 
+            eventKeys 
+        });
         //We save the device in the repository
         await this.iotDeviceRepository.create(device);
         //We return the device
@@ -43,12 +51,14 @@ export default class CreateIoTDevice {
      */
     getNewDeviceWithId = ({        
         name, 
-        type
+        type,
+        eventKeys
     }: NewIoTDevicePrimitives): IoTDevice => (
         IoTDevice.fromPrimitives({
             _id: this.generateDeviceId().toString(),
             name,
-            type
+            type,
+            eventKeys: eventKeys || IoTDeviceEventKeys.getDefaultIoTDeviceEventKeys(new IoTDeviceType(type))
         })
     );
 

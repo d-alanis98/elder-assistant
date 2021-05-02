@@ -40,6 +40,28 @@ export default class SearchIoTDeviceData {
         return deviceDataRecords;
     }
 
+    /**
+     * Entry point for the search last record by device ID and event type use case.
+     * @param {string} eventKey The identifier of the event (i.e: Location). 
+     * @returns 
+     */
+    lastRecordByDeviceIdAndEventType = async ({
+        eventKey,
+        deviceId
+    }: LastRecordSearchParameters): Promise<Nullable<IoTDeviceData>> => {
+        //We search all the records in the repository sorted by the most recent
+        const deviceDataRecords: Nullable<IoTDeviceData[]> = await this.iotDeviceDataRepository.searchAll(
+            { key: eventKey, deviceId },
+            { order: { issuedAt: -1 } }
+        );
+        if(!deviceDataRecords)
+            throw new UnexistingIoTDeviceData();
+        //We return the first record
+        return deviceDataRecords.length > 0
+            ? deviceDataRecords[0]
+            : null;
+    }
+
     //Facade helpers
     /**
      * Method to get the IoTDeviceData records in their primitive values representation.
@@ -58,4 +80,9 @@ interface SearchParameters {
     limit: number | undefined;
     deviceId: string;
     startingAt: string | undefined;
+}
+
+interface LastRecordSearchParameters {
+    eventKey?: string;
+    deviceId: string;
 }

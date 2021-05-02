@@ -2,6 +2,7 @@
 import IoTDeviceId from './value-objects/IoTDeviceId';
 import IoTDeviceName from './value-objects/IoTDeviceName';
 import IoTDeviceType from './value-objects/IoTDeviceType';
+import IoTDeviceEventKeys from './value-objects/IoTDeviceEventKeys';
 import IoTDeviceConfiguration from './value-objects/IoTDeviceConfiguration';
 //Shared domain
 import UserId from '../../Shared/domain/modules/User/UserId';
@@ -10,7 +11,7 @@ import AggregateRoot from '../../Shared/domain/AggregateRoot';
 
 /**
  * @author Damián Alanís Ramírez
- * @version 2.4.3
+ * @version 3.6.3
  * @description IoTDevice entity abstraction.
  */
 export default class IoTDevice extends AggregateRoot {
@@ -18,6 +19,7 @@ export default class IoTDevice extends AggregateRoot {
     readonly name: IoTDeviceName;
     readonly type: IoTDeviceType;
     readonly ownedBy?: UserId;
+    readonly eventkeys: IoTDeviceEventKeys;
     readonly configuration?: IoTDeviceConfiguration;
 
 
@@ -26,6 +28,7 @@ export default class IoTDevice extends AggregateRoot {
         name: IoTDeviceName,
         type: IoTDeviceType,
         ownedBy?: UserId,
+        eventKeys?: IoTDeviceEventKeys,
         configuration?: IoTDeviceConfiguration
     ) {
         super();
@@ -33,6 +36,7 @@ export default class IoTDevice extends AggregateRoot {
         this.name = name;
         this.type = type;
         this.ownedBy = ownedBy;
+        this.eventkeys = eventKeys || new IoTDeviceEventKeys([]);
         this.configuration = configuration;
     }
 
@@ -45,6 +49,7 @@ export default class IoTDevice extends AggregateRoot {
             _id: this.id.toString(),
             name: this.name.toString(),
             type: this.type.value,
+            eventKeys: this.eventkeys.values,
         }
         if(this.ownedBy)
             primitiveValues.ownedBy = this.ownedBy.toString();
@@ -68,12 +73,14 @@ export default class IoTDevice extends AggregateRoot {
         name: IoTDeviceName,
         type: IoTDeviceType,
         ownedBy?: UserId,
+        eventKeys?: IoTDeviceEventKeys,
         configuration?: IoTDeviceConfiguration
     ): IoTDevice => new IoTDevice(
         id,
         name,
         type,
         ownedBy,
+        eventKeys,
         configuration
     );
 
@@ -87,12 +94,14 @@ export default class IoTDevice extends AggregateRoot {
         name,
         type,
         ownedBy,
+        eventKeys,
         configuration
     }: IoTDevicePrimitives) => new IoTDevice(
         new IoTDeviceId(_id),
         new IoTDeviceName(name),
         new IoTDeviceType(type),
         ownedBy ? new UserId(ownedBy) : undefined,
+        new IoTDeviceEventKeys(eventKeys),
         configuration && new IoTDeviceConfiguration(configuration)
     );
 
@@ -118,10 +127,12 @@ export interface IoTDevicePrimitives {
     name: string;
     type: string;
     ownedBy?: string;
+    eventKeys: string[];
     configuration?: Object;
 };
 
 export interface NewIoTDevicePrimitives {
     name: string;
     type: string;
+    eventKeys?: string[];
 }

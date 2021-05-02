@@ -12,7 +12,7 @@ import { iotDeviceDependencies } from '../../../application/Shared/domain/consta
 
 /**
  * @author Damián Alanís Ramírez
- * @version 1.2.1
+ * @version 1.3.1
  * @description Controller for the create IoT device use case.
  */
 export default class IoTDeviceCreateController extends Controller {
@@ -26,11 +26,15 @@ export default class IoTDeviceCreateController extends Controller {
             //We validate the request
             this.validateRequest(request);
             //We get the parameters from the request
-            const { name, type } = request.body;
+            const { name, type, eventKeys } = request.body;
             //We get an instance of the use case from the dependencies container
             const createIoTDevice: CreateIoTDevice = container.get(iotDeviceDependencies.UseCases.CreateIoTDevice);
             //We execute the use case logic
-            const device: IoTDevice = await createIoTDevice.run({ name, type });
+            const device: IoTDevice = await createIoTDevice.run({ 
+                name, 
+                type, 
+                eventKeys 
+            });
             //We send the response with the new device data
             response.status(httpStatus.OK).send(device.toPrimitives());
         } catch(exception) {

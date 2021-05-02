@@ -92,4 +92,11 @@ export const register = (router: Router) => {
         //UserAuthorization.validateAllowedRoles,
         iotDeviceDataSearchController.run.bind(iotDeviceDataSearchController)
     );
+
+    //Get latest IoT device data records
+    router.get(
+        '/iot/device/:deviceId/latest',
+        UserAuthentication.validateAuthToken,
+        iotDeviceDataSearchController.searchLastRecordByDeviceIDAndEventType.bind(iotDeviceDataSearchController)
+    );
 }
