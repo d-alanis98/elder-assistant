@@ -13,7 +13,7 @@ import dependencies, { iotDeviceDependencies } from '../../../Shared/domain/cons
 
 /**
  * @author Damián Alanís Ramírez
- * @version 1.2.1
+ * @version 1.3.1
  * @description Link Iot device use cases abstractions.
  */
 export default class LinkIoTDevice {
@@ -57,7 +57,9 @@ export default class LinkIoTDevice {
         device.id,
         device.name,
         device.type,
-        user.id
+        user.id,
+        device.eventkeys,
+        device.configuration
     );
 
 }

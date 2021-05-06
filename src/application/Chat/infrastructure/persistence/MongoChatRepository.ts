@@ -6,11 +6,12 @@ import { Nullable } from '../../../Shared/domain/Nullable';
 //Repository contract
 import ChatRepository from '../../domain/ChatRepository';
 //Infrastructure
+import { QueryParameters } from '../../../Shared/infrastructure/Persistence/DataRepository';
 import { MongoRepository } from '../../../Shared/infrastructure/Persistence/Mongo/MongoRepository';
 
 /**
  * @author Damián Alanís Ramírez
- * @version 1.1.1
+ * @version 1.2.1
  * @description Mongo DB repository for the Chats collection.
  */
 export default class MongoChatRepository
@@ -29,6 +30,25 @@ export default class MongoChatRepository
         //We return the chat, creating it from primitives, if the document exists, otherwise returning null
         return document
             ? Chat.fromPrimitives(document)
+            : null;
+    }
+
+    /**
+     * Method to get all the records in the repository, based on a query, wheter by ID or a different query represented with
+     * an object.
+     * @param {Object} filter Filter to apply to the records.
+     * @param {QueryParamaters} queryParameters Extra parameters like limit, order, etc.
+     * @returns 
+     */
+    searchAll = async (filter: ChatId | Object, queryParameters?: QueryParameters): Promise<Nullable<Chat[]>> => {
+        //We get the documents
+        const documents = await this.findAllInCollection(
+            filter,
+            queryParameters
+        );
+        //We return the items
+        return documents
+            ? documents.map(document => Chat.fromPrimitives(document))
             : null;
     }
 

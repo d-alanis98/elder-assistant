@@ -2,9 +2,19 @@ import { Router } from 'express';
 //Middlewares
 import UserAuthentication from '../middleware/User/UserAuthentication';
 //Controllers
+import ChatController from '../controllers/Chat/ChatController';
 import ChatMessageController from '../controllers/Chat/ChatMessageController';
 
 export const register = (router: Router) => {
+
+    //Get the chats a user belongs to
+    const chatController: ChatController = new ChatController();
+    router.get(
+        '/chats',
+        UserAuthentication.validateAuthToken,
+        chatController.run.bind(chatController)
+    );
+
     /**
      * ChatMessage
      */

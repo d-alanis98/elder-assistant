@@ -54,6 +54,7 @@ export const subscriptionsDependencies = {
 export const chatDependencies = {
     UseCases: {
         CreateChat: 'Chat.CreateChat',
+        SearchChat: 'Chat.SearchChat'
     },
     Controllers: {
         CreateChatController: 'Chat.CreateChatController'

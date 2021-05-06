@@ -8,6 +8,10 @@ services:
     Chat.CreateChat:
         class: ../../../../application/Chat/application/create/CreateChat
         arguments: ['@Chat.ChatRepository']
+
+    Chat.SearchChat:
+        class: ../../../../application/Chat/application/search/SearchChat
+        arguments: ['@Chat.ChatRepository']
     #Controllers
     #Chat.CreateChatController:
         #class: ../../../../backend/controllers/Chat/CreateChatController

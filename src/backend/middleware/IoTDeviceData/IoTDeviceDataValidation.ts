@@ -2,7 +2,7 @@ import { check } from 'express-validator';
 
 /**
  * @author Damián Alanís Ramírez
- * @version 1.1.1
+ * @version 1.2.1
  * @description Middlewares to apply to the IoTDeviceData requests.
  */
 export default class IoTDeviceDataValidation {
@@ -21,7 +21,5 @@ export default class IoTDeviceDataValidation {
             .notEmpty()
             .withMessage('Value of the record is required')
             .bail()
-            .trim()
-            .escape()
     ];
 }
