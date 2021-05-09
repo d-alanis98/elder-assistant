@@ -9,7 +9,7 @@ enum Levels {
 
 /**
  * @author Damián Alanís Ramírez
- * @version 0.1.1
+ * @version 1.2.1
  * @description Class that implements the Logger interface. It is provided via dependency injection, to act as the logger of
  * the application.
  */
@@ -35,14 +35,21 @@ export default class WinstonLogger implements Logger {
     }
 
     debug(message: string) {
-        this.logger.debug(message);
+        this.logger.debug(this.getMessageToLog(message));
     }
 
     error(message: string | Error) {
-        this.logger.error(message);
+        const messageToLog = message instanceof Error
+            ? message.message
+            : message;
+        this.logger.error(this.getMessageToLog(messageToLog));
     }
 
     info(message: string) {
-        this.logger.info(message);
+        this.logger.info(this.getMessageToLog(message));
     }
+
+    getMessageToLog = (message: string) => (
+        `[${new Date().toLocaleString() }]: ${message}`
+    );
 }

@@ -11,6 +11,7 @@ import container from '../../dependency-injection';
 import { iotDeviceDependencies } from '../../../application/Shared/domain/constants/dependencies';
 //Domain events
 import CreatedIoTDeviceData from '../../../application/IoTDeviceData/domain/events/CreatedIoTDeviceData';
+import OnCreatedIoTDeviceData from '../../../application/IoTDeviceData/domain/events/handlers/OnCreatedIoTDeviceData';
 
 /**
  * @author Damián Alanís Ramírez
@@ -41,21 +42,11 @@ export default class IoTDeviceDataCreateController extends Controller {
     }
 
     /**
-     * @todo Finish. Here we need to validate the record limit business rule, as well, we need to determine the 
-     * data key, to pass it to a service that determines if an specific action needs to be fired after that (i.e:
-     * sending a notification, mail, data through websocket etc).
-     * We register the event handlers, in this case, we are interested in the CreatedIoTDeviceData
+     * We register the event handlers for this entity.
+     * @todo Finish. Here we need to validate the record limit business rule.
      */
     registerEventHandlers() {
-        this.onDomainEvent('CreatedIoTDeviceData', (event: CreatedIoTDeviceData) => {
-            //We get the deviceId from the event data
-            const { deviceData: { deviceId } } = event;
-            //We log the value
-            console.log(`Device ID: ${deviceId.toString()}`);
-            //Here we'd invoke the search all events by deviceId use case, and count the registers, to know if we
-            //are exceeding the limit established in the business rules. In that case, we are getting the oldest register
-            //and we'll delete it.
-        });
+        this.onDomainEvent(CreatedIoTDeviceData.name, new OnCreatedIoTDeviceData().handle);
     }
 
 }
