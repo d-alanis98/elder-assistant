@@ -12,6 +12,10 @@ services:
     Chat.SearchChat:
         class: ../../../../application/Chat/application/search/SearchChat
         arguments: ['@Chat.ChatRepository']
+
+    Chat.UpdateChat:
+        class: ../../../../application/Chat/application/update/UpdateChat
+        arguments: ['@Chat.ChatRepository']
     #Controllers
     #Chat.CreateChatController:
         #class: ../../../../backend/controllers/Chat/CreateChatController

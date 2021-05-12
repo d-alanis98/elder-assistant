@@ -7,7 +7,7 @@ import ChatRepository from '../../domain/ChatRepository';
 
 /**
  * @author Damián Alanís Ramírez
- * @version 1.1.1 
+ * @version 2.2.3
  * @description Search chat use case.
  */
 export default class SearchChat {
@@ -33,6 +33,24 @@ export default class SearchChat {
             throw new ChatNotFound();
         return chats;
     }
+
+    /**
+     * Method to search a chat by its ID.
+     * @param {string} chatId ID of the chat to search.
+     * @returns 
+     */
+    byChatId = async (chatId: string) => (
+        this.chatRepository.search({ _id: chatId })
+    );
+
+    /**
+     * Method to search a chat by it's owner ID.
+     * @param {string} ownerId ID of the owner of the chat to search.
+     * @returns 
+     */
+    byOwnerId = async (ownerId: string) => (
+        this.chatRepository.search({ ownedBy: ownerId })
+    );
 
 }
 
