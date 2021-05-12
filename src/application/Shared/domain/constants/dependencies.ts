@@ -43,6 +43,7 @@ export const subscriptionsDependencies = {
     UseCases: {
         FindSubscription: 'Subscriptions.FindSubscription',
         CreateSubscription: 'Subscriptions.CreateSubscription',
+        UpdateSubscription: 'Subscriptions.UpdateSubscription',
     },
     Controllers: {
         FindSubscriptionController: 'Subscriptions.FindSubscriptionController',

@@ -4,12 +4,12 @@ import ErrorWithStatusCode from '../../../Shared/domain/exceptions/ErrorWithStat
 
 /**
  * @author Damián Alanís Ramírez
- * @version 1.1.1
+ * @version 1.2.1
  * @description Custom exception to throw when the provided subscription status is not valid.
  */
 export default class SubscriptionStatusNotValid extends ErrorWithStatusCode {
-    constructor() {
-        super('Subscription status not valid');
+    constructor(status?: string) {
+        super(`Subscription status ${ status ? `[${ status }]` : '' } not valid`);
         this.statusCode = httpStatus.BAD_REQUEST;
     }
 }

@@ -2,6 +2,7 @@
 import { RequestWithUser } from '../../../middleware/User/UserAuthentication';
 //Domain exceptions
 import UserNotAuthenticated from '../../../../application/User/domain/exceptions/UserNotAuthenticated';
+import { UserPrimitives } from '../../../../application/User/domain/User';
 
 
 /**
@@ -16,9 +17,18 @@ export default class UserControllerHelpers {
      * @returns 
      */
     static getUserIdFromRequest = (request: RequestWithUser): string => {
+        return UserControllerHelpers.getUserDataFromRequest(request)._id;
+    }
+
+    /**
+     * Helper method to get the user data contained in the request instance.
+     * @param {RequestWithUser} request Request with user data.
+     * @returns 
+     */
+    static getUserDataFromRequest = (request: RequestWithUser): UserPrimitives => {
         const { user } = request;
         if (!user)
             throw new UserNotAuthenticated();
-        return user._id;
+        return user;
     }
 }

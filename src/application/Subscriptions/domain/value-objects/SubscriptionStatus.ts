@@ -4,20 +4,13 @@ import SubscriptionStatusNotValid from '../exceptions/SubscriptionStatusNotValid
 
 /**
  * @author Damián Alanís Ramírez
- * @version 1.1.1
+ * @version 1.3.2
  * @description Value object that describes the subscription status (accepted or rejected).
  */
 export default class SubscriptionStatus extends EnumValueObject<string> {
 
     constructor(status: string) {
         super(status, Object.values(SubscriptionValidStatus));
-    }
-
-    /**
-     * Method to handle the validation error.
-     */
-    throwErrorForInvalidValue = () => {
-        throw new SubscriptionStatusNotValid();
     }
 
     //Facade
@@ -32,6 +25,13 @@ export default class SubscriptionStatus extends EnumValueObject<string> {
      * @returns Instance with accepted status.
      */
     static withAcceptedStatus = () => new SubscriptionStatus(SubscriptionValidStatus.ACCEPTED);
+
+    /**
+     * Method to handle the validation error.
+     */
+    throwErrorForInvalidValue(status: string) {
+        throw new SubscriptionStatusNotValid(status);
+    }
 }
 
 //Valid status values

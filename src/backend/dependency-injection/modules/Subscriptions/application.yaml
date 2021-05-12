@@ -10,6 +10,9 @@ services:
     Subscriptions.CreateSubscription:
         class: ../../../../application/Subscriptions/application/create/CreateSubscription
         arguments: ['@Subscriptions.SubscriptionsRepository']
+    Subscriptions.UpdateSubscription:
+        class: ../../../../application/Subscriptions/application/update/UpdateSubscription
+        arguments: ['@Subscriptions.SubscriptionsRepository']
     #Controllers
     Subscriptions.FindSubscriptionController:
         class: ../../../../backend/controllers/Subscriptions/FindSubscriptionController

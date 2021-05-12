@@ -4,21 +4,21 @@ import httpStatus from 'http-status';
 import Subscription from '../../../application/Subscriptions/domain/Subscription';
 //Use cases
 import CreateSubscription from '../../../application/Subscriptions/application/create/CreateSubscription';
+import UpdateSubscription from '../../../application/Subscriptions/application/update/UpdateSubscription';
 //Base controller
 import Controller from '../Controller';
 //Request with additional data
 import { RequestWithUser } from '../../middleware/User/UserAuthentication';
-//Exceptions
-import UserNotAuthenticated from '../../../application/User/domain/exceptions/UserNotAuthenticated';
+//Helpers
+import UserControllerHelpers from '../Shared/User/UserControllerHelpers';
 //Dependency injection
 import container from '../../dependency-injection';
 import { subscriptionsDependencies } from '../../../application/Shared/domain/constants/dependencies';
 
 
-
 /**
  * @author Damián Alanís Ramírez
- * @version 1.1.1
+ * @version 2.2.1
  * @description Controller to handle the create subscription request.
  */
 export default class CreateSubscriptionController extends Controller {
@@ -29,11 +29,8 @@ export default class CreateSubscriptionController extends Controller {
      */
     run = async (request: RequestWithUser, response: Response) => {
         try {
-            //We validate the user in the request
-            if(!request.user)
-                throw new UserNotAuthenticated();
             //We get the data from the request
-            const { _id: from } = request.user;
+            const from = UserControllerHelpers.getUserIdFromRequest(request);
             const { userId: to } = request.params;
             //We get the use case from the dependencies container and execute it
             const createSubscription: CreateSubscription = container.get(subscriptionsDependencies.UseCases.CreateSubscription);
@@ -44,4 +41,29 @@ export default class CreateSubscriptionController extends Controller {
             this.handleBaseExceptions(exception, response);
         }
     }
+
+    /**
+     * Method to handle the accept or reject subscription request.
+     * @param {RequestWithUser} request Express request with user data.
+     * @param {Response} response Express response.
+     */
+    acceptOrRejectSubscription = async (request: RequestWithUser, response: Response) => {
+        try {
+            //We get the data from the request
+            const { status, permissions } = request.body;
+            const { subscriptionId } = request.params;
+            //We get the use case from the dependencies container and execute it
+            const createSubscription: UpdateSubscription = container.get(subscriptionsDependencies.UseCases.UpdateSubscription);
+            const updatedSubscription: Subscription = await createSubscription.updateStatusAndPermissions({ 
+                id: subscriptionId,
+                status, 
+                permissions
+            });
+            //We send the updated subscription as response
+            response.status(httpStatus.OK).send(updatedSubscription.toPrimitives());
+        } catch(exception) {
+            this.handleBaseExceptions(exception, response);
+        }
+    }
+
 }

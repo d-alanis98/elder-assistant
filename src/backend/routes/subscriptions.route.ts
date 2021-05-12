@@ -2,6 +2,7 @@ import { Router } from 'express';
 //Middlewares
 import UserAuthorization from '../middleware/User/UserAuthorization';
 import UserAuthentication from '../middleware/User/UserAuthentication';
+import SubscriptionValidation from '../middleware/Subscription/SubscriptionValidation';
 //Dependency injection
 import container from '../dependency-injection';
 import { subscriptionsDependencies } from '../../application/Shared/domain/constants/dependencies';
@@ -39,5 +40,14 @@ export const register = (router: Router) => {
         '/user/requested-subscriptions',
         UserAuthentication.validateAuthToken,
         findSubscriptionController.getRequestedSubscriptions.bind(findSubscriptionController)
+    );
+
+    //Update the status and permissions of a subscription
+    router.put(
+        '/user/subscription/:subscriptionId',
+        UserAuthentication.validateAuthToken,
+        UserAuthorization.validatePrimaryRole,
+        SubscriptionValidation.verifySubscriptionOwnership,
+        createSubscriptionController.acceptOrRejectSubscription.bind(createSubscriptionController)
     );
 }

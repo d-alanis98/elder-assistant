@@ -18,3 +18,10 @@ export interface SubscriptionPermissionsParameters {
     sendChatMessages: Boolean;
     receiveNotificationsOnOwnerEvents?: Boolean;
 }
+
+export const defaultSubscriptionPermissions: SubscriptionPermissionsParameters = {
+    readOwnerData: true,
+    readChatMessages: true,
+    sendChatMessages: true,
+    receiveNotificationsOnOwnerEvents: true
+};
