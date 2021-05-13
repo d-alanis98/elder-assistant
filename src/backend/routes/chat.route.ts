@@ -31,4 +31,11 @@ export const register = (router: Router) => {
         chatMessageController.run.bind(chatMessageController)
     );
 
+    //Get chat messages
+    router.get(
+        '/chat/:chatId/messages',
+        UserAuthentication.validateAuthToken,
+        chatMessageController.searchAll.bind(chatMessageController)
+    );
+
 }

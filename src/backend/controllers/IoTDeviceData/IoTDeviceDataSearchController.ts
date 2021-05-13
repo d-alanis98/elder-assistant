@@ -2,6 +2,8 @@ import { Request, Response } from 'express';
 import httpStatus from 'http-status';
 //Domain
 import IoTDeviceData from '../../../application/IoTDeviceData/domain/IoTDeviceData';
+//Shared domain
+import { Nullable } from '../../../application/Shared/domain/Nullable';
 //Use cases
 import SearchIoTDeviceData from '../../../application/IoTDeviceData/application/search/SearchIoTDeviceData';
 //Base controller
@@ -11,11 +13,10 @@ import container from '../../dependency-injection';
 import { iotDeviceDependencies } from '../../../application/Shared/domain/constants/dependencies';
 //Pagination contract
 import PaginatedDataResult from '../../../application/Shared/domain/requests/PaginatedDataResult';
-import { Nullable } from '../../../application/Shared/domain/Nullable';
 
 /**
  * @author Damián Alanís Ramírez
- * @version 3.6.5
+ * @version 3.7.5
  * @description Controller to handle the create IoT device data request.
  */
 export default class IoTDeviceDataSearchController extends Controller {

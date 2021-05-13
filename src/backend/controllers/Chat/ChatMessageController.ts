@@ -2,22 +2,26 @@ import { Response } from 'express';
 import httpStatus from 'http-status';
 //Domain
 import ChatMessage from '../../../application/ChatMessage/domain/ChatMessage';
+import { ChatMessageFileParameters, ValidChatMessageTypes } from '../../../application/ChatMessage/domain/value-objects/ChatMessageContent';
 //Use cases
 import CreateChatMessage from '../../../application/ChatMessage/application/create/CreateChatMessage';
+import SearchChatMessage from '../../../application/ChatMessage/application/search/SearchChatMessage';
 //Exceptions
 import UserNotAuthenticated from '../../../application/User/domain/exceptions/UserNotAuthenticated';
 //Request with additional data
 import { RequestWithUser } from '../../middleware/User/UserAuthentication';
 //Base controller
 import Controller from '../Controller';
+//Query result contracts
+import { PaginatedChatMessages } from '../../../application/ChatMessage/domain/ChatMessageRepository';
 //Dependency injection
 import container from '../../dependency-injection';
 import { chatMessageDependencies } from '../../../application/Shared/domain/constants/dependencies';
-import { ChatMessageFileParameters, ValidChatMessageTypes } from '../../../application/ChatMessage/domain/value-objects/ChatMessageContent';
+
 
 /**
  * @author Damian Alanis Ramirez
- * @version 3.2.1
+ * @version 4.3.1
  * @description Controller to handle chat message requests.
  */
 export default class ChatMessageController extends Controller {
@@ -45,6 +49,38 @@ export default class ChatMessageController extends Controller {
             });
             //We send the response
             response.status(httpStatus.OK).send(chatMessage.toPrimitives());
+        } catch(exception) {
+            this.handleBaseExceptions(exception, response);
+        }
+    }
+
+    /**
+     * Handler for the searchAll request.
+     * @param {RequestWithData} request Request with user data.
+     * @param {Response} response Express response.
+     */
+    searchAll = async (request: RequestWithUser, response: Response) => {
+        try {
+            //We get the data from the request
+            const { chatId } = request.params;
+            const { limit: limitParam, startingAt: startingAtParam } = request.query;
+            //We clean the query parameters
+            const limit = limitParam ? Number(limitParam) : undefined;
+            const startingAt = startingAtParam ? startingAtParam.toString() : undefined;
+            //We get and execute the use case
+            const searchChatMessage: SearchChatMessage = container.get(chatMessageDependencies.UseCases.SearchChatMessage);
+            const messageRecords: PaginatedChatMessages = await searchChatMessage.getAllMessages({
+                limit,
+                chatId, 
+                startingAt
+            }); 
+            //We get the primitive records
+            const messagePrimitiveRecords = SearchChatMessage.getDataRecordsInPrimitiveValues(messageRecords.data);
+            //We send the response
+            response.status(httpStatus.OK).send({
+                ...messageRecords,
+                data: messagePrimitiveRecords
+            });
         } catch(exception) {
             this.handleBaseExceptions(exception, response);
         }

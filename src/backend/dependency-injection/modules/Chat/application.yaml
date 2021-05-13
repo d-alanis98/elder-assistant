@@ -29,6 +29,9 @@ services:
     ChatMessage.CreateChatMessage:
         class: ../../../../application/ChatMessage/application/create/CreateChatMessage
         arguments: ['@ChatMessage.ChatMessageRepository']
+    ChatMessage.SearchChatMessage:
+        class: ../../../../application/ChatMessage/application/search/SearchChatMessage
+        arguments: ['@ChatMessage.ChatMessageRepository']
     #Controllers
     ChatMessage.ChatMessageController:
         class: ../../../../backend/controllers/Chat/ChatMessageController

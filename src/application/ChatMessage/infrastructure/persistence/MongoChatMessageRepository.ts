@@ -3,16 +3,16 @@ import ChatMessage from '../../domain/ChatMessage';
 import ChatMessageId from '../../domain/value-objects/ChatMessageId';
 //Shared domain
 import { Nullable } from '../../../Shared/domain/Nullable';
-import { QueryParameters } from '../../../Shared/infrastructure/Persistence/DataRepository';
+import { defaultQueryParameters, QueryParameters } from '../../../Shared/infrastructure/Persistence/DataRepository';
 //Contract
-import ChatMessageRepository from '../../domain/ChatMessageRepository';
+import ChatMessageRepository, { PaginatedChatMessages } from '../../domain/ChatMessageRepository';
 //Base repository
 import { MongoRepository } from '../../../Shared/infrastructure/Persistence/Mongo/MongoRepository';
 
 
 /**
  * @author Damián Alanís Ramírez
- * @version 1.1.1
+ * @version 2.2.1
  * @description Mongo DB repository for the ChatMessages collection.
  */
 export default class MongoChatMessageRepository
@@ -50,6 +50,39 @@ export default class MongoChatMessageRepository
         //We return the items
         return documents 
             ? documents.map(document => ChatMessage.fromPrimitives(document))
+            : null;
+    }
+
+    /**
+     * Method to get all the results in a paginated way, with the following structure:
+     * @example
+     * {
+     *  data: [...], [...], ...,
+     *  next: 'next_value_uri'
+     * }
+     * @note The next value must be the startingAt parameter of the next request to get the 'next' page.
+     * @param {Object} filters The filters to apply to the query (i.e: get data by deviceID).
+     * @param {QueryParameters} queryParameters Parameters for the pagination.
+     * @returns 
+     */
+    searchAllPaginated = async (
+        filters: Object, 
+        queryParameters?: QueryParameters
+    ): Promise<Nullable<PaginatedChatMessages>> => {
+        const documents = await this.findAllPaginated(
+            queryParameters 
+                ? { ...defaultQueryParameters, ...queryParameters } //We merge the parameters (with the provided parameters overriding the default ones if they exist)
+                : defaultQueryParameters, 
+            filters
+        );
+        //We return the items
+        return documents 
+            ? ({
+                data: documents.data.map(document => (
+                    ChatMessage.fromPrimitives(document))
+                ),
+                next: documents.next
+            })
             : null;
     }
 
