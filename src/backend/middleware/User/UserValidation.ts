@@ -31,7 +31,6 @@ export default class UserValidation {
             .bail()
             .trim()
             .escape()
-            .normalizeEmail()
             .isEmail()
             .withMessage('It must be a valid email'),
         check('password')
