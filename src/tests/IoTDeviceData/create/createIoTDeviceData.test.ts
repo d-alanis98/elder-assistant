@@ -1,7 +1,11 @@
+//Domain
+import IoTDeviceData from '../../../application/IoTDeviceData/domain/IoTDeviceData';
+//Use cases
 import CreateIoTDeviceData from '../../../application/IoTDeviceData/application/create/CreateIoTDeviceData';
-import IoTDeviceData from '../../../application/IoTDeviceData/domain/IoTDeviceData'
+//Shared domain
 import Uuid from '../../../application/Shared/domain/value-object/Uuid';
-import InMemoryRepository from '../../Shared/infrastructure/persistence/InMemoryRepository'
+//Mock repository
+import InMemoryRepository from '../../Shared/infrastructure/Persistence/InMemoryRepository';
 
 
 //Global variables
@@ -33,7 +37,7 @@ it('IoT device data is created successfully', () => {
 });
 
 //We test the IoT device data primitives persistence in the IoT device data repository
-it('IoT device is stored correctly in the data repository', async () => {
+it('IoT device  data is stored correctly in the data repository', async () => {
     const createdIoTDeviceInDatabase = iotDeviceDataRepository.search(createdIoTDeviceData.id.toString());
     expect(createdIoTDeviceData.toPrimitives()).toMatchObject(createdIoTDeviceInDatabase);
 });

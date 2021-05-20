@@ -1,8 +1,9 @@
 //User domain
-import User from '../../../User/domain/User';
+import User, { UserPrimitives } from '../../../User/domain/User';
 import UserId from '../../../Shared/domain/modules/User/UserId';
 import UserEmail from '../../../User/domain/value-objects/UserEmail';
 import UserPassword from '../../../User/domain/value-objects/UserPassword';
+import UserRepository from '../../../User/domain/UserRepository';
 import UserWithWrongCredentials from '../../../User/domain/exceptions/UserWithWrongCredentials';
 //User authentication domain
 import RefreshTokenRevoked from '../../domain/exceptions/RefreshTokenRevoked';
@@ -20,15 +21,20 @@ import dependencies from '../../../Shared/domain/constants/dependencies';
 
 /**
  * @author Damián Alanís Ramírez
- * @version 3.5.9
+ * @version 3.6.10
  * @description User authentication use case abstraction, it handles the authentication of the user, given an email and a 
  * password in plain text, it makes use of the password hasher to compare the stored hashed password and resolve if the 
  * credentials are correct, throwing an exception if they don't match.
  */
 export default class UserAuthentication {
+    private readonly userRepository: UserRepository;
     private readonly dataRepository: UserAuthenticationRepository;
 
-    constructor(dataRepository: UserAuthenticationRepository) {
+    constructor(
+        userRepository: UserRepository,
+        dataRepository: UserAuthenticationRepository
+    ) {
+        this.userRepository = userRepository;
         this.dataRepository = dataRepository;
     }
 
@@ -40,7 +46,7 @@ export default class UserAuthentication {
         userCredentials: UserCredentials, 
         userDeviceName: string,
         userDeviceType: string
-    ): Promise<Object> => {
+    ): Promise<UserAuthenticationResponse> => {
         const { email, password }: UserCredentials = userCredentials;
         //We force the credentials to be value-objects, for consistency
         const { email: userEmail, password: userPassword }: UserCredentials = this.normalizeCredentials({ email, password });
@@ -93,7 +99,7 @@ export default class UserAuthentication {
         user: User,
         userDeviceName: string,
         userDeviceType: string
-    ): Promise<Object> => {
+    ): Promise<AuthenticationTokens> => {
         //We get all the user properties except from the password (even if it is a hash we don't want to expose it).
         const userWithoutPassword: User = User.getUserWithoutPassword(user);
         //We use the authenticator to sign and generate the token
@@ -152,7 +158,7 @@ export default class UserAuthentication {
      * @returns 
      */
     private getUser = async (userId: UserId): Promise<User> => {
-        const userFinder: UserFinder = container.get(dependencies.UserFindUseCase);
+        const userFinder: UserFinder = new UserFinder(this.userRepository);
         return await userFinder.find(userId);
     }
 
@@ -175,3 +181,12 @@ export interface UserCredentials {
     email: string | UserEmail,
     password: string | UserPassword
 };
+
+interface AuthenticationTokens {
+    token: string;
+    refreshToken: string;
+}
+
+export interface UserAuthenticationResponse extends AuthenticationTokens {
+    user: UserPrimitives;
+}

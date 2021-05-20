@@ -10,12 +10,16 @@ import UserDateOfBirth from '../../../../application/User/domain/value-objects/U
 //Shared domain
 import Uuid from '../../../../application/Shared/domain/value-object/Uuid';
 
+
+//For testing porpouses only, this is obviously not done in production
+export const primaryUserPlainTextPassword = Uuid.random.toString().slice(0, 10);
+
 export const primaryUser: User = new User(
-    new UserId(Uuid.random().toString()),
+    new UserId('johndoe@test.com'),
     new UserName('John'),
     new UserType(AllowedUserTypes.PRIMARY),
     new UserEmail('johndoe@test.com'),
-    new UserPassword(Uuid.random.toString().slice(0, 10)),
+    new UserPassword(primaryUserPlainTextPassword),
     new UserLastName('Doe'),
     new UserDateOfBirth(new Date())
 );

@@ -13,8 +13,6 @@ import {
 //Infrastructure
 import ORMEvents from '../ORMEvents';
 import ORMProvider from '../ORMProvider';
-//Domain
-import AggregateRoot from '../../../../domain/AggregateRoot';
 
 export default abstract class TypeORMRepository<T> implements ORMProvider, ORMEvents {
     private _connection: Promise<Connection>;

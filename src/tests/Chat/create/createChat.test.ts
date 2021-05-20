@@ -7,7 +7,7 @@ import ChatRepository from '../../../application/Chat/domain/ChatRepository';
 //Mock data
 import { primaryUser } from '../../Shared/domain/User/testUsers'
 //Mock repository
-import InMemoryRepository from '../../Shared/infrastructure/persistence/InMemoryRepository'
+import InMemoryRepository from '../../Shared/infrastructure/Persistence/InMemoryRepository'
 
 //Global variables
 let createChat: CreateChat;

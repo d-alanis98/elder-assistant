@@ -11,7 +11,7 @@ import { primaryUser } from '../../Shared/domain/User/testUsers';
 //Mock devices
 import { createdIoTDevice } from '../create/createIoTDevice.test';
 //Mock repositories
-import mockUsersRepository from '../../Shared/domain/User/mockUsersRepository';
+import mockUsersRepository from '../../Shared/infrastructure/User/mockUsersRepository';
 import { iotDeviceRepositoryWithCreatedDevice } from '../create/createIoTDevice.test';
 
 

@@ -9,7 +9,7 @@ import UserWithWrongCredentials from '../../../application/User/domain/exception
 //User authentication domain
 import { AuthenticationDeviceAgent } from '../../../application/UserAuthentication/domain/UserAuthentication';
 //Use cases
-import UserAuthentication from '../../../application/UserAuthentication/application/authentication/UserAuthentication';
+import UserAuthentication, { UserAuthenticationResponse } from '../../../application/UserAuthentication/application/authentication/UserAuthentication';
 //Base
 import Controller from '../Controller';
 //Middleware
@@ -20,7 +20,7 @@ import dependencies from '../../../application/Shared/domain/constants/dependenc
 
 /**
  * @author Damián Alanís Ramírez
- * @version 4.8.9
+ * @version 4.9.9
  * @description Controller for the authentication use case.
  */
 export default class UserAuthenticationController extends Controller {
@@ -44,7 +44,7 @@ export default class UserAuthenticationController extends Controller {
             //We get the user device agent
             const { deviceName, deviceType }: AuthenticationDeviceAgent = this.getDeviceAgent(request);
             //We await the token resolution
-            const tokens: Object = await userAuthentication.run(
+            const tokens: UserAuthenticationResponse = await userAuthentication.run(
                 { email, password }, 
                 deviceName,
                 deviceType

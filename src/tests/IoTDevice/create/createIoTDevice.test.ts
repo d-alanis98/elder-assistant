@@ -6,7 +6,7 @@ import CreateIoTDevice from '../../../application/IoTDevice/application/create/C
 //IoT device repository contract
 import { IoTDeviceRepository } from '../../../application/IoTDevice/domain/IoTDeviceRepository';
 //Mock repository
-import IoTDeviceMockRepository from '../../Shared/domain/IoTDevice/IoTDeviceMockRepository';
+import IoTDeviceMockRepository from '../../Shared/infrastructure/IoTDevice/IoTDeviceMockRepository';
 
 
 //Global variables

@@ -4,25 +4,25 @@ import UserId from '../../../../application/Shared/domain/modules/User/UserId';
 //Repository contract
 import UserRepository from '../../../../application/User/domain/UserRepository';
 //Mock repository
-import InMemoryRepository from '../../infrastructure/persistence/InMemoryRepository';
+import InMemoryRepository from '../Persistence/InMemoryRepository';
 //Mock users
-import { adminUser, primaryUser, secondaryUser } from './testUsers';
+import { adminUser, primaryUser, secondaryUser } from '../../domain/User/testUsers';
 import { Nullable } from '../../../../application/Shared/domain/Nullable';
 
-
-
-class UsersRepository  {
-    private memoryRepository: InMemoryRepository<User>;
+/**
+ * @author Damián Alanís Ramírez
+ * @version 1.1.1
+ * @description Mock user repository implementing in-memory data storage.
+ */
+export class UsersMockRepository  {
+    public memoryRepository: InMemoryRepository<User>;
 
     constructor() {
         this.memoryRepository = new InMemoryRepository<User>();
-        this.memoryRepository.create(primaryUser);
-        this.memoryRepository.create(secondaryUser);
-        this.memoryRepository.create(adminUser);
     }
 
     search = async (id: string | UserId): Promise<Nullable<User>> => {
-        const document: UserPrimitives | undefined = await this.memoryRepository.search(id);
+        const document: UserPrimitives | undefined = await this.memoryRepository.search(id.toString());
         return document
             ? User.fromPrimitives(document)
             : undefined;
@@ -41,6 +41,9 @@ class UsersRepository  {
     }
 }
 
-const mockUsersRepository: UserRepository = new UsersRepository();
+const mockUsersRepository: UserRepository = new UsersMockRepository();
+mockUsersRepository.create(primaryUser);
+mockUsersRepository.create(secondaryUser);
+mockUsersRepository.create(adminUser);
 
 export default mockUsersRepository;

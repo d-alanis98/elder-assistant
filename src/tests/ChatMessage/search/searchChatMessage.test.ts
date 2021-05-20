@@ -11,7 +11,7 @@ import Uuid from '../../../application/Shared/domain/value-object/Uuid';
 //User mock data
 import { primaryUser } from '../../Shared/domain/User/testUsers';
 //Mock repository
-import InMemoryRepository from '../../Shared/infrastructure/persistence/InMemoryRepository';
+import InMemoryRepository from '../../Shared/infrastructure/Persistence/InMemoryRepository';
 
 //Global variables
 let searchChatMessage: SearchChatMessage;

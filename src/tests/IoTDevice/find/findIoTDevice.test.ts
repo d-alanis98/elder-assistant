@@ -5,7 +5,7 @@ import { IoTDeviceRepository } from '../../../application/IoTDevice/domain/IoTDe
 //User repository contract
 import UserRepository from '../../../application/User/domain/UserRepository';
 //Mock users repository
-import mockUsersRepository from '../../Shared/domain/User/mockUsersRepository';
+import mockUsersRepository from '../../Shared/infrastructure/User/mockUsersRepository';
 import { primaryUser } from '../../Shared/domain/User/testUsers';
 //Mock iot device repository with data
 import { createdIoTDevice } from '../create/createIoTDevice.test';

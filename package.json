@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "nodemon --exec ts-node src/app.ts",
     "test": "jest",
+    "testAll": "npm test -- --coverage --collectCoverageFrom=src/**/application/** --collectCoverageFrom=!src/**/infrastructure/** --collectCoverageFrom=!src/**/domain/**",
     "generateKey": "node src/scripts/generateKey.js",
     "increaseVersion": "node src/scripts/increaseVersion.js"
   },

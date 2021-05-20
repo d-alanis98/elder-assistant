@@ -6,8 +6,13 @@ import { IoTDeviceRepository } from '../../../../application/IoTDevice/domain/Io
 //Shared domain
 import { Nullable } from '../../../../application/Shared/domain/Nullable';
 //Mock repository
-import InMemoryRepository from '../../infrastructure/persistence/InMemoryRepository';
+import InMemoryRepository from '../Persistence/InMemoryRepository';
 
+/**
+ * @author Damián Alanís Ramírez
+ * @version 1.1.1
+ * @description Mock IoTDevice repository implementing in-memory data storage.
+ */
 export default class IoTDeviceMockRepository implements IoTDeviceRepository {
     private inMemoryRepository: InMemoryRepository<IoTDevice>;
 

@@ -22,8 +22,14 @@ export default class InMemoryRepository<T extends AggregateRoot> implements Data
     }
 
     search = async (id: any): Promise<Nullable<any>> => {
-        const itemId = id.toString();
-        return this.data.find(item => item._id === itemId)
+        if(typeof id === 'string' || id.value !== undefined) {
+            const itemId = id.toString();
+            return this.data.find(item => item._id === itemId)
+        } else {
+            const filterKey: string = Object.keys(id)[0];
+            const filterValue = Object.values(id)[0];
+            return this.data.find(item => item[filterKey as keyof BasePrimitiveValue] === filterValue);
+        }
     }
 
     update = async (value: T): Promise<void> => {
