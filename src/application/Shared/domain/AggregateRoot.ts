@@ -47,4 +47,6 @@ export default abstract class AggregateRoot {
      * to JS primitive values.
      */
     abstract toPrimitives(): any;
+
+    static fromPrimitives?(primitives: Object): any;
 }

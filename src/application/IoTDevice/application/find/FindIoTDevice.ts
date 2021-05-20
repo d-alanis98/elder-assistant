@@ -12,20 +12,24 @@ import IoTDeviceNotOwnedByAnyUser from '../../domain/exceptions/IoTDeviceNotOwne
 import { Nullable } from '../../../Shared/domain/Nullable';
 //Repository
 import { IoTDeviceRepository } from '../../domain/IoTDeviceRepository';
-//Dependency injection
-import container from '../../../../backend/dependency-injection';
-import dependencies from '../../../Shared/domain/constants/dependencies';
+//Users repository
+import UserRepository from '../../../User/domain/UserRepository';
 
 /**
  * @author Damián Alanís Ramírez
- * @version 2.4.3
+ * @version 3.4.4
  * @description Find Iot device use cases abstractions.
  */
 export default class FindIoTDevice {
+    private readonly usersRepository: UserRepository;
     private readonly iotDeviceRepository: IoTDeviceRepository;
 
     //We inject the repository
-    constructor(iotDeviceRepository: IoTDeviceRepository) {
+    constructor(
+        usersRepository: UserRepository,
+        iotDeviceRepository: IoTDeviceRepository
+    ) {
+        this.usersRepository = usersRepository;
         this.iotDeviceRepository = iotDeviceRepository;
     }
 
@@ -75,7 +79,7 @@ export default class FindIoTDevice {
         if(!ownedBy)
             throw new IoTDeviceNotOwnedByAnyUser();
         //We get the user finder from the dependencies container
-        const userFinder: UserFinder = container.get(dependencies.UserFindUseCase);
+        const userFinder: UserFinder = new UserFinder(this.usersRepository);
         //We execute the use case
         return await userFinder.find(ownedBy);
     }

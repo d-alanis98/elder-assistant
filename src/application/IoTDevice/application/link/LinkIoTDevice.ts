@@ -3,24 +3,28 @@ import User from '../../../User/domain/User';
 import IoTDevice from '../../domain/IoTDevice';
 //Repository
 import { IoTDeviceRepository } from '../../domain/IoTDeviceRepository';
+//User domain
+import UserRepository from '../../../User/domain/UserRepository';
 //Use cases
 import UserFinder from '../../../User/application/find/UserFinder';
 import FindIoTDevice from '../find/FindIoTDevice';
-//Dependency injection
-import container from '../../../../backend/dependency-injection';
-import dependencies, { iotDeviceDependencies } from '../../../Shared/domain/constants/dependencies';
 
 
 /**
  * @author Damián Alanís Ramírez
- * @version 1.3.1
+ * @version 2.3.3
  * @description Link Iot device use cases abstractions.
  */
 export default class LinkIoTDevice {
+    private readonly usersRepository: UserRepository;
     private readonly iotDeviceRepository: IoTDeviceRepository;
 
     //We inject the repository
-    constructor(iotDeviceRepository: IoTDeviceRepository) {
+    constructor(
+        usersRepository: UserRepository,
+        iotDeviceRepository: IoTDeviceRepository
+    ) {
+        this.usersRepository = usersRepository;
         this.iotDeviceRepository = iotDeviceRepository;
     }
 
@@ -34,10 +38,10 @@ export default class LinkIoTDevice {
         deviceId, 
     }: IoTDeviceLinkPrimitives) => {
         //We get the device finder use case and search the device
-        const findIoTDevice: FindIoTDevice = container.get(iotDeviceDependencies.UseCases.FindIoTDevice);
+        const findIoTDevice: FindIoTDevice = new FindIoTDevice(this.usersRepository, this.iotDeviceRepository);
         const device: IoTDevice = await findIoTDevice.run({ id: deviceId });
         //We get the user finder use case and search the user.
-        const userFinder: UserFinder = container.get(dependencies.UserFindUseCase);
+        const userFinder: UserFinder = new UserFinder(this.usersRepository);
         const user: User = await userFinder.find(userId);
         //We set the device owner
         const deviceWithOwner: IoTDevice = this.getDeviceWithOwner(device, user);

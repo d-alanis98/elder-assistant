@@ -28,10 +28,10 @@ services:
         arguments: ['@IoTDevice.IoTDeviceRepository']
     IoTDevice.FindIoTDevice:
         class: ../../../../application/IoTDevice/application/find/FindIoTDevice
-        arguments: ['@IoTDevice.IoTDeviceRepository']
+        arguments: ['@Users.UserRepository', '@IoTDevice.IoTDeviceRepository']
     IoTDevice.LinkIoTDevice:
         class: ../../../../application/IoTDevice/application/link/LinkIoTDevice
-        arguments: ['@IoTDevice.IoTDeviceRepository']
+        arguments: ['@Users.UserRepository', '@IoTDevice.IoTDeviceRepository']
     IoTDevice.SearchIoTDeviceData:
         class: ../../../../application/IoTDeviceData/application/search/SearchIoTDeviceData
         arguments: ['@IoTDevice.IoTDeviceDataRepository']
