@@ -14,22 +14,25 @@ import { Nullable } from '../../../Shared/domain/Nullable';
 import SubscriptionAlreadyExists from '../../domain/exceptions/SubscriptionAlreadyExists';
 import CircularSubscriptionNotAllowed from '../../domain/exceptions/CircularSubscriptionNotAllowed';
 import SubscriptionTargetIsNotAPrimaryUser from '../../domain/exceptions/SubscriptionTargetIsNotAPrimaryUser';
-//Repository contract
+//Repository contracts
+import UserRepository from '../../../User/domain/UserRepository';
 import SubscriptionRepository from '../../domain/SubscriptionsRepository';
-//Dependency injection
-import container from '../../../../backend/dependency-injection';
-import dependencies, { subscriptionsDependencies } from '../../../Shared/domain/constants/dependencies';
 
 
 /**
  * @author Damián Alanís Ramírez
- * @version 2.3.1
+ * @version 3.3.4
  * @description Create subscription use case.
  */
 export default class CreateSubscription {
+    readonly userRepository: UserRepository;
     readonly subscriptionRepository: SubscriptionRepository;
 
-    constructor(subscriptionRepository: SubscriptionRepository) {
+    constructor(
+        userRepository: UserRepository,
+        subscriptionRepository: SubscriptionRepository
+    ) {
+        this.userRepository = userRepository;
         this.subscriptionRepository = subscriptionRepository;
     }
 
@@ -45,8 +48,8 @@ export default class CreateSubscription {
     }: SubscriptionRequestPrimitives): Promise<Subscription> => {
         //We perform some validations, like non existance of circular subscription or subscription to a user that is not a primary user.
         await this.validateTargetUserIsPrimaryUser(to);
-        await this.validateSubscriptionDoesNotExist(to, from);
         this.validateSubscriberUserDifferentFromTarget(to, from);
+        await this.validateSubscriptionDoesNotExist(to, from);
         //We create the subscription entity
         const subscription = new Subscription(
             null,
@@ -76,8 +79,8 @@ export default class CreateSubscription {
      * @param {string} to Id of the target user.
      */
     private validateTargetUserIsPrimaryUser = async (to: string) => {
-        //We get the user find use case
-        const userFinder: UserFinder = container.get(dependencies.UserFindUseCase);
+        //We set up the user finder use case
+        const userFinder: UserFinder = new UserFinder(this.userRepository);
         //We search the user by it's ID
         const user: User = await userFinder.find(to);
         //We validate the user type, it must be 
@@ -91,7 +94,7 @@ export default class CreateSubscription {
      * @param {string} from Id of the subscriber. 
      */
     private validateSubscriptionDoesNotExist = async (to: string, from: string) => {
-        const findSubscription: FindSubscription = container.get(subscriptionsDependencies.UseCases.FindSubscription);
+        const findSubscription: FindSubscription = new FindSubscription(this.subscriptionRepository);
         const subscription: Nullable<Subscription> = await findSubscription.searchByMembers({ to, from });
         if(subscription)
             throw new SubscriptionAlreadyExists();

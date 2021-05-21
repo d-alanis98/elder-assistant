@@ -11,8 +11,8 @@ import InMemoryRepository from '../../Shared/infrastructure/Persistence/InMemory
 
 //Global variables
 let createChat: CreateChat;
-let createdChat: Chat;
-let chatRepository: ChatRepository = new InMemoryRepository<Chat>();
+export let createdChat: Chat;
+export let chatRepository: ChatRepository = new InMemoryRepository<Chat>();
 
 //Base data
 const chatData = {

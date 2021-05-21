@@ -9,7 +9,7 @@ services:
         arguments: ['@Subscriptions.SubscriptionsRepository']
     Subscriptions.CreateSubscription:
         class: ../../../../application/Subscriptions/application/create/CreateSubscription
-        arguments: ['@Subscriptions.SubscriptionsRepository']
+        arguments: ['@Users.UserRepository', '@Subscriptions.SubscriptionsRepository']
     Subscriptions.UpdateSubscription:
         class: ../../../../application/Subscriptions/application/update/UpdateSubscription
         arguments: ['@Subscriptions.SubscriptionsRepository']
