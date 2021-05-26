@@ -56,9 +56,6 @@ export default class CreateSubscription {
             new UserId(to),
             new UserId(from)
         );
-        /**
-         * @todo Validate non existance of the subscription before saving it
-         */
         await this.subscriptionRepository.create(subscription);
         return subscription;
     }

@@ -51,3 +51,13 @@ it('An exception is thrown if we attemp to add a user that is already a chat mem
         expect(exception).toBeInstanceOf(UserIsChatMemberAlready);
     }
 });
+
+//We test the removal of a user from the chat
+it('The user is removed from the chat successfully', async () => {
+    const updatedChat = await updateChat.removeUserFromChat({
+        chatId: createdChat.id,
+        userToRemove: secondaryUser
+    });
+    expect(updatedChat).toBeDefined();
+    expect(updatedChat.toPrimitives().members).not.toContainEqual(secondaryUser.toPrimitives());
+});
