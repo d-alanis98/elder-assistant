@@ -4,7 +4,7 @@ import { WebSocketMessageTypes } from './WebSocketMessageTypes';
 
 /**
  * @author Damián Alanís Ramírez
- * @version 2.3.2
+ * @version 3.3.2
  * @description Class to manage the web socket clients, either registering or unregistering the sockets, associating them 
  * to the user via its ID.
  */
@@ -82,7 +82,11 @@ export default class WebSocketClients {
      * @param data Data to send.
      * @returns 
      */
-    static emitDataToUser = (userId: UserId, data: any) => {
+    static emitDataToUser = (
+        userId: UserId, 
+        messageType: string,  
+        messageData: any
+    ) => {
         if(!WebSocketClients.webSocketClients[userId])
             return;
         WebSocketClients.webSocketClients[userId].forEach(webSocket => {
@@ -93,7 +97,10 @@ export default class WebSocketClients {
                 return;
             }
             //We send the data
-            webSocket.send(data);
+            webSocket.send(JSON.stringify({
+                type: messageType,
+                payload: messageData 
+            }));
         });
     }
 
@@ -103,9 +110,13 @@ export default class WebSocketClients {
      * @param data Data to send.
      * @returns 
      */
-    static emitDataToUsers = (users: UserId[], data: any) => {
+    static emitDataToUsers = (
+        users: UserId[], 
+        messageType: string,
+        messageData: any
+    ) => {
         //We emit the data for each user
-        users.forEach(user => WebSocketClients.emitDataToUser(user, data));
+        users.forEach(user => WebSocketClients.emitDataToUser(user, messageType, messageData));
     }
 }
 

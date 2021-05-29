@@ -17,7 +17,7 @@ import dependencies, { iotDeviceDependencies } from '../../../../../Shared/domai
 
 /**
  * @author Damián Alanís Ramírez
- * @version 1.1.1
+ * @version 2.1.1
  * @description Basic handler for IoTDevice data create and update events. It sends the updated value through web sockets
  * to the allowed users (the owner and the subscribers with the corresponding permissions).
  */
@@ -46,11 +46,11 @@ export default class BaseHandler implements DeviceDataHandler {
             const usersIDToNotify = usersToNotify.map(user => user.id.toString());
             //We extract the data to send and serialize it
             const dataToSend = this.extractDataFromEvent(event);
-            const serializedData = JSON.stringify(dataToSend);
             //We send the data
             WebSocketClients.emitDataToUsers(
                 usersIDToNotify,
-                serializedData
+                'IoTDeviceData',
+                dataToSend
             );
             //We log the action
             logger.info(`Data for the event [${dataToSend.key}] was succesfully sent via web sockets.`);

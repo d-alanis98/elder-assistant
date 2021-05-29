@@ -3,6 +3,9 @@ import httpStatus from 'http-status';
 //Domain
 import ChatMessage from '../../../application/ChatMessage/domain/ChatMessage';
 import { ChatMessageFileParameters, ValidChatMessageTypes } from '../../../application/ChatMessage/domain/value-objects/ChatMessageContent';
+//Domain events
+import ChatMessageCreated from '../../../application/ChatMessage/domain/events/ChatMessageCreated';
+import OnChatMessageCreated from '../../../application/ChatMessage/domain/events/OnChatMessageCreated';
 //Use cases
 import CreateChatMessage from '../../../application/ChatMessage/application/create/CreateChatMessage';
 import SearchChatMessage from '../../../application/ChatMessage/application/search/SearchChatMessage';
@@ -18,10 +21,9 @@ import { PaginatedChatMessages } from '../../../application/ChatMessage/domain/C
 import container from '../../dependency-injection';
 import { chatMessageDependencies } from '../../../application/Shared/domain/constants/dependencies';
 
-
 /**
  * @author Damian Alanis Ramirez
- * @version 4.3.1
+ * @version 4.4.2
  * @description Controller to handle chat message requests.
  */
 export default class ChatMessageController extends Controller {
@@ -84,6 +86,13 @@ export default class ChatMessageController extends Controller {
         } catch(exception) {
             this.handleBaseExceptions(exception, response);
         }
+    }
+
+    /**
+     * We register the event handlers for this entity.
+     */
+    registerEventHandlers() {
+        this.onDomainEvent(ChatMessageCreated.name, event => new OnChatMessageCreated(event).handle());
     }
 
     //Internal helpers
