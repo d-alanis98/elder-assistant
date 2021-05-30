@@ -52,8 +52,6 @@ export default class BaseHandler implements DeviceDataHandler {
                 'IoTDeviceData',
                 dataToSend
             );
-            //We log the action
-            logger.info(`Data for the event [${dataToSend.key}] was succesfully sent via web sockets.`);
         } catch(error) {
             //We log the error
             logger.error(error.message);
@@ -61,10 +59,9 @@ export default class BaseHandler implements DeviceDataHandler {
         
     }
 
-    private extractDataFromEvent = (event: CreatedIoTDeviceData) => ({
-        key: event.deviceData.key.toString(),
-        value: event.deviceData.value.value,
-    });
+    private extractDataFromEvent = (event: CreatedIoTDeviceData) => (
+        event.deviceData.toPrimitives()
+    );
 
     private getUsersToNotify = async (event: CreatedIoTDeviceData): Promise<User[]> => {
         const { deviceData: { deviceId } } = event;
