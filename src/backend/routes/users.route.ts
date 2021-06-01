@@ -20,12 +20,14 @@ export const register = (router: Router) => {
         UserValidation.loginValidator(),
         userAuthenticationController.run.bind(userAuthenticationController)
     );
+
     //Refresh auth token
     router.post(
         '/refresh-token',
         UserAuthentication.validateRefreshToken,
         userAuthenticationController.refreshToken.bind(userAuthenticationController)
     );
+
     //Register user
     const userRegisterController: UserRegisterController = container.get(dependencies.UserRegisterController);
     router.post(
@@ -33,11 +35,19 @@ export const register = (router: Router) => {
         UserValidation.registerValidator(), 
         userRegisterController.run.bind(userRegisterController)
     );
+
     //Get user by id
     const userFinderController: UserFinderController = container.get(dependencies.UserFinderController);
     router.get(
         '/user/:id',
         UserAuthentication.validateAuthToken,
         userFinderController.run.bind(userFinderController)
+    );
+
+    //Get all users by name and last name match
+    router.get(
+        '/users',
+        UserAuthentication.validateAuthToken,
+        userFinderController.getAllUsers.bind(userFinderController)
     );
 };

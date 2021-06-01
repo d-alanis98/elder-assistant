@@ -12,7 +12,7 @@ import dependencies from '../../../application/Shared/domain/constants/dependenc
 
 /**
  * @author Damián Alanís Ramírez
- * @version 1.2.3
+ * @version 1.3.3
  * @description Controller for the get user use case.
  */
 export default class UserFinderController extends Controller {
@@ -36,5 +36,32 @@ export default class UserFinderController extends Controller {
                 response.status(httpStatus.NOT_FOUND).send(error.message);
             else this.handleBaseExceptions(error, response);
         } 
+    }
+
+    /**
+     * Method to get all the users by name and lastname match.
+     * @param {Request} request Express request.
+     * @param {Response} response Express response.
+     */
+    getAllUsers = async (request: Request, response: Response) => {
+        try {
+            //We get the data from the request
+            const { name, limit, lastName, startingAt } = request.body;
+            //We get and execute the use case
+            const userFinder: UserFinder = container.get(dependencies.UserFindUseCase);
+            const usersList = await userFinder.getAllUsers({
+                name,
+                limit,
+                lastName,
+                startingAt
+            });
+            //We send the response with the paginated data in primitive values
+            response.status(httpStatus.OK).send({
+                ...usersList,
+                data: usersList.data.map(item => item.toPrimitives())
+            });
+        } catch(exception) {
+            this.handleBaseExceptions(exception, response);
+        }
     }
 }

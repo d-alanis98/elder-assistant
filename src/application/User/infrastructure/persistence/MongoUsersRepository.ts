@@ -4,13 +4,14 @@ import UserId from '../../../Shared/domain/modules/User/UserId';
 import UserRepository from '../../domain/UserRepository';
 //Shared domain
 import { Nullable } from '../../../Shared/domain/Nullable';
+import PaginatedDataResult from '../../../Shared/domain/requests/PaginatedDataResult';
 //Infrastructure
-import { DataRepository } from '../../../Shared/infrastructure/Persistence/DataRepository';
+import { DataRepository, defaultQueryParameters, QueryParameters } from '../../../Shared/infrastructure/Persistence/DataRepository';
 import { MongoRepository } from '../../../Shared/infrastructure/Persistence/Mongo/MongoRepository';
 
 /**
  * @author Damián Alanís Ramírez
- * @version 2.2.6
+ * @version 2.3.6
  * @description Mongo DB repository for the Users collection.
  */
 export class MongoUsersRepository extends MongoRepository<User> implements UserRepository, DataRepository<User> {
@@ -39,6 +40,31 @@ export class MongoUsersRepository extends MongoRepository<User> implements UserR
                 _id: id.toString(), 
                 ...document,
             }) 
+            : null;
+    }
+
+    /**
+     * Method to get all the results in a paginated way, with the following structure:
+     * @param {Object} filters The filters to apply to the query (i.e: get data by userId).
+     * @param {QueryParameters} queryParameters Parameters for the pagination.
+     * @returns 
+     */
+    public searchAllPaginated = async (
+        filters: Object, 
+        queryParameters?: QueryParameters
+    ): Promise<Nullable<PaginatedDataResult<User>>> => {
+        const documents = await this.findAllPaginated(
+            queryParameters 
+                ? { ...defaultQueryParameters, ...queryParameters } //We merge the parameters (with the provided parameters overriding the default ones if they exist)
+                : defaultQueryParameters, 
+            filters
+        );
+        //We return the items
+        return documents 
+            ? ({
+                data: documents.data.map(document => User.fromPrimitives(document)),
+                next: documents.next
+            })
             : null;
     }
 
