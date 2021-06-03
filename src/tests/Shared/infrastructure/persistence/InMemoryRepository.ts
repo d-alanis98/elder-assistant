@@ -7,7 +7,7 @@ import { DataRepository } from '../../../../application/Shared/infrastructure/Pe
 
 /**
  * @author Damián Alanís Ramírez
- * @version 1.1.1
+ * @version 1.2.1
  * @description In memory repository implementation, for testing porpouses.
  */
 export default class InMemoryRepository<T extends AggregateRoot> implements DataRepository<T> {
@@ -56,7 +56,12 @@ export default class InMemoryRepository<T extends AggregateRoot> implements Data
         let filteredData = this.data;
         if(filters)
             Object.entries(filters).map(([filter, value]) => {
-                filteredData = filteredData.filter(item => item[filter as keyof BasePrimitiveValue] === value);
+                filteredData = filteredData.filter(item => {
+                    const column = item[filter as keyof BasePrimitiveValue];
+                    if(Array.isArray(column))
+                        return column.includes(value);
+                    return column === value 
+                });
             }); 
         return {
             data: filteredData,

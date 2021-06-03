@@ -15,7 +15,7 @@ import Uuid from '../../../../application/Shared/domain/value-object/Uuid';
 export const primaryUserPlainTextPassword = Uuid.random.toString().slice(0, 10);
 
 export const primaryUser: User = new User(
-    new UserId('johndoe@test.com'),
+    new UserId(Uuid.random().toString()),
     new UserName('John'),
     new UserType(AllowedUserTypes.PRIMARY),
     new UserEmail('johndoe@test.com'),
