@@ -11,7 +11,7 @@ import AggregateRoot from '../../Shared/domain/AggregateRoot';
 
 /**
  * @author Damian Alanis Ramirez
- * @version 1.1.1
+ * @version 1.2.1
  * @description Notification entity abstraction.
  */
 export default class Notification<T = any> extends AggregateRoot {
@@ -69,6 +69,17 @@ export default class Notification<T = any> extends AggregateRoot {
     );
 
     //Helpers
+
+    /**
+     * Method to get the notifications list in primitive reoresentation.
+     * @param {Notification[]} notifications Paginated data collection in aggregate instance form.
+     * @returns 
+     */
+    static getNotificationsListInPrimitiveValues = (
+        notifications: Notification[]
+    ): NotificationPrimitives[] => notifications.map((notification: Notification) => (
+        notification.toPrimitives()
+    ));
 
     /**
      * Method to get the primitive representation of the users ID's.

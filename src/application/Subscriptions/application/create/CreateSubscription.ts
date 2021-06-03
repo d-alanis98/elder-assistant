@@ -1,5 +1,7 @@
 //Subscription domain
 import Subscription, { SubscriptionRequestPrimitives } from '../../domain/Subscription';
+//Domain events
+import SubscriptionRequestCreated from '../../domain/events/SubscriptionRequestCreated';
 //User domain
 import UserId from '../../../Shared/domain/modules/User/UserId';
 //User context
@@ -10,6 +12,7 @@ import { AllowedUserTypes } from '../../../User/domain/value-objects/UserType';
 import FindSubscription from '../find/FindSubscription';
 //Shared domains
 import { Nullable } from '../../../Shared/domain/Nullable';
+import DomainEventsHandler from '../../../Shared/domain/events/DomainEventsHandler';
 //Exceptions
 import SubscriptionAlreadyExists from '../../domain/exceptions/SubscriptionAlreadyExists';
 import CircularSubscriptionNotAllowed from '../../domain/exceptions/CircularSubscriptionNotAllowed';
@@ -21,7 +24,7 @@ import SubscriptionRepository from '../../domain/SubscriptionsRepository';
 
 /**
  * @author Damián Alanís Ramírez
- * @version 3.3.4
+ * @version 3.4.4
  * @description Create subscription use case.
  */
 export default class CreateSubscription {
@@ -57,6 +60,8 @@ export default class CreateSubscription {
             new UserId(from)
         );
         await this.subscriptionRepository.create(subscription);
+        //We invoke the event dispatcher, that will validate if the subscription was accepted to fire the SubscriptionGranted event
+        this.dispatchSubscriptionCreatedEvent(subscription);
         return subscription;
     }
 
@@ -95,5 +100,16 @@ export default class CreateSubscription {
         const subscription: Nullable<Subscription> = await findSubscription.searchByMembers({ to, from });
         if(subscription)
             throw new SubscriptionAlreadyExists();
+    }
+
+    /**
+     * Method to generate and dispatch the SubscriptionRequestCreated event.
+     * @param {Subscription} subscription The created subscription.
+     * @returns 
+     */
+    private dispatchSubscriptionCreatedEvent = (subscription: Subscription) => {
+        //We add the domain event and dispatch it
+        subscription.addDomainEvent(new SubscriptionRequestCreated(subscription));
+        DomainEventsHandler.dispatchEventsForAggregate(subscription.id);
     }
 }

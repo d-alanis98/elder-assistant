@@ -1,5 +1,5 @@
 //Domain
-import Notification from '../../domain/Notification';
+import Notification, { NotificationPrimitives } from '../../domain/Notification';
 import NotificationId from '../../domain/value-objects/NotificationId';
 //Domain exceptions
 import NotificationNotFound from '../../domain/exceptions/NotificationNotFound';
@@ -15,7 +15,7 @@ import { QueryParameters } from '../../../Shared/infrastructure/Persistence/Data
 
 /**
  * @author Damian Alanis Ramirez
- * @version 1.1.1
+ * @version 1.2.1
  * @description Search notification use case.
  */
 export default class SearchNotification {
@@ -67,4 +67,18 @@ export default class SearchNotification {
             throw new NotificationNotFound();
         return paginatedNotifications;
     }
+
+    //Facade
+    /**
+     * Method to get the data records in primitive reoresentation.
+     * @param {PaginatedDataResult<Notification>} notificationRecords Paginated data collection in aggregate instance form.
+     * @returns 
+     */
+    static getDataRecordsInPrimitiveValues = (
+        notificationRecords: PaginatedDataResult<Notification>
+    ): PaginatedDataResult<NotificationPrimitives> => ({
+        ...notificationRecords,
+        data: Notification.getNotificationsListInPrimitiveValues(notificationRecords.data)
+    });
+
 }

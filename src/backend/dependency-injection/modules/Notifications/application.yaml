@@ -1,0 +1,16 @@
+services:
+    #Repositories
+    Notifications.NotificationsRepository:
+        class: ../../../../application/Notifications/infrastructure/persistence/MongoNotificationsRepository
+        arguments: ['@Shared.DataRepository']
+    #Use cases
+    Notifications.SearchNotification:
+        class: ../../../../application/Notifications/application/search/SearchNotification
+        arguments: ['@Notifications.NotificationsRepository']
+    Notifications.CreateNotification:
+        class: ../../../../application/Notifications/application/create/CreateNotification
+        arguments: ['@Notifications.NotificationsRepository']
+    #Controllers
+    Notifications.NotificationsController:
+        class: ../../../../backend/controllers/Notifications/NotificationsController
+        arguments: []

@@ -73,3 +73,14 @@ export const chatMessageDependencies = {
         ChatMessageController: 'ChatMessage.ChatMessageController',
     }
 }
+
+//Notifications entity
+export const notificationsDependencies = {
+    UseCases: {
+        CreateNotification: 'Notifications.CreateNotification',
+        SearchNotification: 'Notifications.SearchNotification'
+    },
+    Controllers: {
+        NotificationsController: 'Notifications.NotificationsController'
+    }
+}

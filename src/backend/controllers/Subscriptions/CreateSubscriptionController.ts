@@ -4,8 +4,10 @@ import httpStatus from 'http-status';
 import Subscription from '../../../application/Subscriptions/domain/Subscription';
 //Domain events
 import SubscriptionGranted from '../../../application/Subscriptions/domain/events/SubscriptionGranted';
+import SubscriptionRequestCreated from '../../../application/Subscriptions/domain/events/SubscriptionRequestCreated';
 //Event handlers
 import OnSubscriptionGranted from '../../../application/Subscriptions/domain/events/handlers/OnSubscriptionGranted';
+import OnSubscriptionRequestCreated from '../../../application/Subscriptions/domain/events/handlers/OnSubscriptionRequestCreated';
 //Use cases
 import CreateSubscription from '../../../application/Subscriptions/application/create/CreateSubscription';
 import UpdateSubscription from '../../../application/Subscriptions/application/update/UpdateSubscription';
@@ -22,7 +24,7 @@ import { subscriptionsDependencies } from '../../../application/Shared/domain/co
 
 /**
  * @author Damián Alanís Ramírez
- * @version 2.3.2
+ * @version 2.4.2
  * @description Controller to handle the create subscription request.
  */
 export default class CreateSubscriptionController extends Controller {
@@ -75,7 +77,9 @@ export default class CreateSubscriptionController extends Controller {
      * We register the event handlers for domain events.
      */
     protected registerEventHandlers() {
-        //Subscription granted domain event, fired when a primary user accepts the subscription of a secodnary user.
+        //Subscription request creation event
+        this.onDomainEvent(SubscriptionRequestCreated.name, new OnSubscriptionRequestCreated().handle);
+        //Subscription granted domain event, fired when a primary user accepts the subscription of a secondary user.
         this.onDomainEvent(SubscriptionGranted.name, OnSubscriptionGranted.handle);
     }
 

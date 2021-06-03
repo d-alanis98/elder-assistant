@@ -5,3 +5,4 @@ imports:
     - { resource: ./modules/UserAuthentication/application.yaml }
     - { resource: ./modules/Subscriptions/application.yaml }
     - { resource: ./modules/Chat/application.yaml }
+    - { resource: ./modules/Notifications/application.yaml }
