@@ -32,6 +32,9 @@ services:
     IoTDevice.LinkIoTDevice:
         class: ../../../../application/IoTDevice/application/link/LinkIoTDevice
         arguments: ['@Users.UserRepository', '@IoTDevice.IoTDeviceRepository']
+    IoTDevice.UpdateIoTDevice:
+        class: ../../../../application/IoTDevice/application/update/UpdateIoTDevice
+        arguments: ['@Users.UserRepository', '@IoTDevice.IoTDeviceRepository']
     IoTDevice.SearchIoTDeviceData:
         class: ../../../../application/IoTDeviceData/application/search/SearchIoTDeviceData
         arguments: ['@IoTDevice.IoTDeviceDataRepository']

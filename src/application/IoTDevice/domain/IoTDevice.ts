@@ -11,14 +11,14 @@ import AggregateRoot from '../../Shared/domain/AggregateRoot';
 
 /**
  * @author Damián Alanís Ramírez
- * @version 3.6.3
+ * @version 3.7.5
  * @description IoTDevice entity abstraction.
  */
 export default class IoTDevice extends AggregateRoot {
     readonly id: IoTDeviceId;
     readonly name: IoTDeviceName;
     readonly type: IoTDeviceType;
-    readonly ownedBy?: UserId;
+    readonly ownedBy?: UserId | null;
     readonly eventkeys: IoTDeviceEventKeys;
     readonly configuration?: IoTDeviceConfiguration;
 
@@ -27,7 +27,7 @@ export default class IoTDevice extends AggregateRoot {
         id: IoTDeviceId,
         name: IoTDeviceName,
         type: IoTDeviceType,
-        ownedBy?: UserId,
+        ownedBy?: UserId | null,
         eventKeys?: IoTDeviceEventKeys,
         configuration?: IoTDeviceConfiguration
     ) {
@@ -53,8 +53,10 @@ export default class IoTDevice extends AggregateRoot {
         }
         if(this.ownedBy)
             primitiveValues.ownedBy = this.ownedBy.toString();
+        if(this.ownedBy === null)
+            primitiveValues.ownedBy = null;
         if (this.configuration)
-            primitiveValues.configuration = this.configuration;
+            primitiveValues.configuration = this.configuration.configuration;
         return primitiveValues;
     }
 
@@ -126,7 +128,7 @@ export interface IoTDevicePrimitives {
     _id: string;
     name: string;
     type: string;
-    ownedBy?: string;
+    ownedBy?: string | null;
     eventKeys: string[];
     configuration?: Object;
 };
@@ -135,4 +137,11 @@ export interface NewIoTDevicePrimitives {
     name: string;
     type: string;
     eventKeys?: string[];
+}
+
+export interface UpdateIoTDeviceParameters {
+    _id: string;
+    name?: string;
+    restoreOwner?: Boolean;
+    configuration?: Object;
 }

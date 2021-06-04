@@ -30,6 +30,18 @@ export const register = (router: Router) => {
         iotDeviceCreateController.run.bind(iotDeviceCreateController)
     );
 
+    //Update device
+    /**
+     * @todo Add validateAllowedRoles.
+     */
+    router.put(
+        '/iot/device/:deviceId',
+        //We validate the presence of the JWT, and we pass the user in the request to the next middlewares
+        UserAuthentication.validateAuthToken,
+        //Finally, we provide the controller to handle the request
+        iotDeviceCreateController.update.bind(iotDeviceCreateController)
+    );
+
     /**
      * @todo Add validateAllowedRoles.
      */
@@ -66,6 +78,13 @@ export const register = (router: Router) => {
         UserAuthorization.validatePrimaryRole,
         iotDeviceLinkController.run.bind(iotDeviceLinkController)
     );
+
+    //Unlink device
+    router.post(
+        '/iot/device/:deviceId/unlink',
+        UserAuthentication.validateAuthToken,
+        iotDeviceLinkController.unlink.bind(iotDeviceLinkController)
+    )
 
     /**
      * @todo, Validate device JWT instead of user one, because the request is going to be made from the IoT device. Also,

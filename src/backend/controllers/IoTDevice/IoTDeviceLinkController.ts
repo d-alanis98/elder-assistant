@@ -13,6 +13,7 @@ import container from '../../dependency-injection';
 import { iotDeviceDependencies } from '../../../application/Shared/domain/constants/dependencies';
 //Controller helpers
 import UserControllerHelpers from '../Shared/User/UserControllerHelpers';
+import UpdateIoTDevice from '../../../application/IoTDevice/application/update/UpdateIoTDevice';
 
 /**
  * @author Damián Alanís Ramírez
@@ -36,6 +37,27 @@ export default class IoTDeviceLinkController extends Controller {
             const device: IoTDevice = await linkIoTDevice.run({ deviceId, userId });
             //We send the response with the new device data
             response.status(httpStatus.OK).send(device.toPrimitives());
+        } catch(exception) {
+            this.handleBaseExceptions(exception, response);
+        }
+    }
+    /**
+     * Method to request the execution of the UpdateIoTDevice use case.
+     * @param {RequestWithUser} request Express request with user data. 
+     * @param {Response} response Express response.
+     */
+    unlink = async (request: RequestWithUser, response: Response): Promise<void> => {
+        try {
+            //We extract the data from the request
+            const { deviceId } = request.params;
+            //We get and execute the use case
+            const updateIoTDevice: UpdateIoTDevice = container.get(iotDeviceDependencies.UseCases.UpdateIoTDevice);
+            const updatedIoTDevice: IoTDevice = await updateIoTDevice.run({
+                _id: deviceId,
+                restoreOwner: true
+            });
+            //We attach the updated device data to the response
+            response.status(httpStatus.OK).send(updatedIoTDevice.toPrimitives());
         } catch(exception) {
             this.handleBaseExceptions(exception, response);
         }

@@ -26,6 +26,7 @@ export const iotDeviceDependencies = {
         FindIoTDevice: 'IoTDevice.FindIoTDevice',
         LinkIoTDevice: 'IoTDevice.LinkIoTDevice',
         CreateIoTDevice: 'IoTDevice.CreateIoTDevice',
+        UpdateIoTDevice: 'IoTDevice.UpdateIoTDevice',
         SearchIoTDeviceData: 'IoTDevice.SearchIoTDeviceData',
         CreateIoTDeviceData: 'IoTDevice.CreateIoTDeviceData',
     },
