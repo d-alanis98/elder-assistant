@@ -6,6 +6,7 @@ import { RequestWithUser } from '../../middleware/User/UserAuthentication';
 import IoTDevice from '../../../application/IoTDevice/domain/IoTDevice';
 //Use cases
 import LinkIoTDevice from '../../../application/IoTDevice/application/link/LinkIoTDevice';
+import UpdateIoTDevice from '../../../application/IoTDevice/application/update/UpdateIoTDevice';
 //Base controller
 import Controller from '../Controller';
 //Dependency injection
@@ -13,20 +14,22 @@ import container from '../../dependency-injection';
 import { iotDeviceDependencies } from '../../../application/Shared/domain/constants/dependencies';
 //Controller helpers
 import UserControllerHelpers from '../Shared/User/UserControllerHelpers';
-import UpdateIoTDevice from '../../../application/IoTDevice/application/update/UpdateIoTDevice';
 
 /**
  * @author Damián Alanís Ramírez
- * @version 1.1.1
+ * @version 1.1.2
  * @description Controller for the link IoT device use cases.
  */
 export default class IoTDeviceLinkController extends Controller {
     /**
      * Entry point for the controller actions.
-     * @param {Request} request Express request 
+     * @param {RequestWithUser} request Express request with additional data
      * @param {Response} response Express response
      */
-    run = async(request: RequestWithUser, response: Response): Promise<void> => {
+    run = async(
+        request: RequestWithUser, 
+        response: Response
+    ): Promise<void> => {
         try {
             //We get the parameters from the request
             const { deviceId } = request.params;

@@ -3,10 +3,14 @@ import { Router } from 'express';
 import container from '../dependency-injection';
 import { iotDeviceDependencies } from '../../application/Shared/domain/constants/dependencies';
 //Middlewares
+import MiddlewareGroup from '../middleware/Shared/MiddlewareGroup';
 import UserAuthorization from '../middleware/User/UserAuthorization';
 import UserAuthentication from '../middleware/User/UserAuthentication';
 import IoTDeviceValidation from '../middleware/IoTDevice/IoTDeviceValidation';
+import SubscriptionValidation from '../middleware/Subscription/SubscriptionValidation';
+import IoTDeviceAuthorization from '../middleware/IoTDevice/IoTDeviceAuthorization';
 import IoTDeviceDataValidation from '../middleware/IoTDeviceData/IoTDeviceDataValidation';
+import SubscriptionPermissions from '../middleware/Subscription/SubscriptionPermissions';
 //Controllers
 import IoTDeviceFindController from '../controllers/IoTDevice/IoTDeviceFindController';
 import IoTDeviceLinkController from '../controllers/IoTDevice/IoTDeviceLinkController';
@@ -31,45 +35,45 @@ export const register = (router: Router) => {
     );
 
     //Update device
-    /**
-     * @todo Add validateAllowedRoles.
-     */
     router.put(
         '/iot/device/:deviceId',
         //We validate the presence of the JWT, and we pass the user in the request to the next middlewares
         UserAuthentication.validateAuthToken,
+        //We validate that the user is a primary user
+        UserAuthorization.validatePrimaryRole,
+        //We validate the device ownership
+        IoTDeviceAuthorization.validateDeviceOwnership,
         //Finally, we provide the controller to handle the request
         iotDeviceCreateController.update.bind(iotDeviceCreateController)
     );
 
-    /**
-     * @todo Add validateAllowedRoles.
-     */
     //Find device by id
     const iotDeviceFindController: IoTDeviceFindController = container.get(iotDeviceDependencies.Controllers.IoTDeviceFindController);
     router.get(
         '/iot/device/:deviceId',
         UserAuthentication.validateAuthToken,
-        //UserAuthorization.validateAllowedRoles,
+        UserAuthorization.validatePrimaryRole,
+        IoTDeviceAuthorization.validateDeviceOwnership,
         iotDeviceFindController.run.bind(iotDeviceFindController)
     );
 
-    /**
-     * @todo Replace validatePrimaryRole middleware with validateAllowedRoles, which includes the primary user and
-     * the secondary users with permission.
-     */
-    //Get devices owned by a user
+    //Get devices owned by a primary user
     router.get(
         '/iot/devices',
         UserAuthentication.validateAuthToken,
         UserAuthorization.validatePrimaryRole,
-        iotDeviceFindController.findByUserId.bind(iotDeviceFindController)
+        iotDeviceFindController.handleDevicesByOwnerRequest.bind(iotDeviceFindController)
     );
 
-    /**
-     * @todo Verify that device was not previously owned by someone.
-     * @todo Generate JWT and refresh token for devices after device link and emmit it via broadcast or UDP.
-     */
+    //Get devices of a user, this endpoint is for secondary users with a subscription to the target primary user
+    router.get(
+        '/user/:primaryUserId/iot/devices',
+        UserAuthentication.validateAuthToken,
+        SubscriptionValidation.verifySubscription,
+        SubscriptionPermissions.hasPermission('readOwnerData'),
+        iotDeviceFindController.handleDevicesByOwnerRequest.bind(iotDeviceFindController)
+    );
+
     //Link device to user
     const iotDeviceLinkController: IoTDeviceLinkController = container.get(iotDeviceDependencies.Controllers.IoTDeviceLinkController);
     router.post(
@@ -83,6 +87,8 @@ export const register = (router: Router) => {
     router.post(
         '/iot/device/:deviceId/unlink',
         UserAuthentication.validateAuthToken,
+        UserAuthorization.validatePrimaryRole,
+        IoTDeviceAuthorization.validateDeviceOwnership,
         iotDeviceLinkController.unlink.bind(iotDeviceLinkController)
     )
 
@@ -100,22 +106,40 @@ export const register = (router: Router) => {
         iotDeviceDataCreateController.run.bind(iotDeviceDataCreateController)
     );
 
-    /**
-     * @todo Add validateAllowedRoles.
-     */
-    //Get IoT device data records
+    //Get IoT device data records, for the owner of the device (primary user)
     const iotDeviceDataSearchController: IoTDeviceDataSearchController = container.get(iotDeviceDependencies.Controllers.IoTDeviceDataSearchController);
     router.get(
         '/iot/device/:deviceId/data',
-        UserAuthentication.validateAuthToken,
-        //UserAuthorization.validateAllowedRoles,
+        //We create a middleware group, to determine the middlewares to apply depending on the user type
+        //The user authentication is handled by default
+        new MiddlewareGroup(
+            [//Middlewares to apply if the user is of primary type
+                UserAuthorization.validatePrimaryRole,
+                IoTDeviceAuthorization.validateDeviceOwnership,
+            ], 
+            [//Middlewares to apply if the user is of secondary type
+                SubscriptionValidation.verifySubscription,
+                SubscriptionPermissions.hasPermission('readOwnerData')
+            ]
+        ).apply,
         iotDeviceDataSearchController.run.bind(iotDeviceDataSearchController)
     );
 
     //Get latest IoT device data records
     router.get(
         '/iot/device/:deviceId/latest',
-        UserAuthentication.validateAuthToken,
+        //We create a middleware group, to determine the middlewares to apply depending on the user type
+        //The user authentication is handled by default
+        new MiddlewareGroup(
+            [//Middlewares to apply if the user is of primary type
+                UserAuthorization.validatePrimaryRole,
+                IoTDeviceAuthorization.validateDeviceOwnership,
+            ], 
+            [//Middlewares to apply if the user is of secondary type
+                SubscriptionValidation.verifySubscription,
+                SubscriptionPermissions.hasPermission('readOwnerData')
+            ]
+        ).apply,
         iotDeviceDataSearchController.searchLastRecordByDeviceIDAndEventType.bind(iotDeviceDataSearchController)
     );
 }

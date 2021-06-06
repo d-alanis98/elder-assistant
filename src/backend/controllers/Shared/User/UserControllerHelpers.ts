@@ -7,7 +7,7 @@ import { UserPrimitives } from '../../../../application/User/domain/User';
 
 /**
  * @author Damián Alanís Ramírez
- * @version 1.1.1
+ * @version 1.2.1
  * @description Helper methods for controllers that make use of User domain.
  */
 export default class UserControllerHelpers {
@@ -18,6 +18,15 @@ export default class UserControllerHelpers {
      */
     static getUserIdFromRequest = (request: RequestWithUser): string => {
         return UserControllerHelpers.getUserDataFromRequest(request)._id;
+    }
+
+    /**
+     * Helper method to get the user type from the user data contained in the request instance.
+     * @param {RequestWithUser} request Request with user data.
+     * @returns 
+     */
+    static getUserTypeFromRequest = (request: RequestWithUser): string => {
+        return UserControllerHelpers.getUserDataFromRequest(request).type;
     }
 
     /**

@@ -8,7 +8,7 @@ import dependencies from '../../../application/Shared/domain/constants/dependenc
 
 /**
  * @author Damian Alanis Ramirez
- * @version 3.5.3
+ * @version 3.5.4
  * @description Express authentication middleware based on JWT.
  */
 export default class UserAuthentication {
@@ -43,7 +43,7 @@ export default class UserAuthentication {
      */
     private static validateToken = (tokenType: ValidTokenTypes) => async (
         request: RequestWithUser,
-        response: Response,
+        _: Response,
         next: NextFunction
     ): Promise<void> => {
         //We get the token from the request

@@ -52,7 +52,6 @@ export abstract class MongoRepository<T extends AggregateRoot> {
     }
 
     /**
-     * @todo Implement a Query type, and use this type, instead of just Object
      * Searchs a document in the collection by it's id.
      * @param {string} id Resource ID. 
      * @returns 

@@ -1,22 +1,26 @@
-import { Request, Response } from 'express';
+import { Response } from 'express';
 import httpStatus from 'http-status';
-//Extended requests
-import { RequestWithUser } from '../../middleware/User/UserAuthentication';
 //IoTDevice domain
 import IoTDevice, { IoTDevicePrimitives } from '../../../application/IoTDevice/domain/IoTDevice';
+//User domain
+import { AllowedUserTypes } from '../../../application/User/domain/value-objects/UserType';
 //Use cases
 import FindIoTDevice from '../../../application/IoTDevice/application/find/FindIoTDevice';
 //Base controller
 import Controller from '../Controller';
+//Request contracts
+import { RequestWithUser } from '../../middleware/User/UserAuthentication';
+import { RequestWithIoTDevice } from '../../middleware/IoTDevice/IoTDeviceAuthorization';
 //Dependency injection
 import container from '../../dependency-injection';
 import { iotDeviceDependencies } from '../../../application/Shared/domain/constants/dependencies';
-//Controller helpers
+//Request helpers
 import UserControllerHelpers from '../Shared/User/UserControllerHelpers';
+import IoTDeviceRequestHelpers from '../Shared/IoTDevice/IoTDeviceRequestHelpers';
 
 /**
  * @author Damián Alanís Ramírez
- * @version 1.1.1
+ * @version 1.3.1
  * @description Controller for the find IoT device use cases.
  */
 export default class IoTDeviceFindController extends Controller {
@@ -25,16 +29,12 @@ export default class IoTDeviceFindController extends Controller {
      * @param {Request} request Express request 
      * @param {Response} response Express response
      */
-    run = async (request: Request, response: Response): Promise<void> => {
+    run = async (request: RequestWithIoTDevice, response: Response): Promise<void> => {
         try {
-            //We get the parameters from the request
-            const { deviceId } = request.params;
-            //We get an instance of the use case from the dependencies container
-            const findIoTDevice: FindIoTDevice = container.get(iotDeviceDependencies.UseCases.FindIoTDevice);
-            //We execute the use case logic
-            const device: IoTDevice = await findIoTDevice.run({ id: deviceId });
-            //We send the response with the new device data
-            response.status(httpStatus.OK).send(device.toPrimitives());
+            //We get the device data from the request (added to it in the IoTDeviceAuthorization middleware)
+            const devicePrimitives = IoTDeviceRequestHelpers.getIoTDeviceDataFromRequest(request);
+            //We send the response
+            response.status(httpStatus.OK).send(devicePrimitives);
         } catch (exception) {
             this.handleBaseExceptions(exception, response);
         }
@@ -45,13 +45,16 @@ export default class IoTDeviceFindController extends Controller {
      * @param {RequestWithUser} request Request with user data.
      * @param {Response} response Express response.
      */
-    findByUserId = async (request: RequestWithUser, response: Response): Promise<void> => {
+    handleDevicesByOwnerRequest = async (request: RequestWithUser, response: Response): Promise<void> => {
         try {
-            const userId: string = UserControllerHelpers.getUserIdFromRequest(request);
-            //We get an instance of the use case from the dependencies container
-            const findIoTDevice: FindIoTDevice = container.get(iotDeviceDependencies.UseCases.FindIoTDevice);
-            //We get the device
-            const devices: IoTDevice[] = await findIoTDevice.byUserId({ userId });
+            //We get the user type
+            const userType = UserControllerHelpers.getUserIdFromRequest(request);
+            //We get the user ID, if the user is of type PRIMARY, the id is in the auth token, otherwise, it is in the URL 
+            const userId = userType === AllowedUserTypes.PRIMARY
+                ? UserControllerHelpers.getUserIdFromRequest(request)
+                : request.params.primaryUserId;
+            //We get the devices
+            const devices = await this.getDevicesByOwnerUserId(userId);
             //We send the response with the devices owned by the user
             response.status(httpStatus.OK).send(this.getResponseDevices(devices));
         } catch (exception) {
@@ -68,4 +71,16 @@ export default class IoTDeviceFindController extends Controller {
     private getResponseDevices = (devices: IoTDevice[]): IoTDevicePrimitives[] => devices.map(device => (
         device.toPrimitives()
     ));
+
+    /**
+     * Method to get the devices by owner user ID.
+     * @param {string} ownerId Id of the user that owns the device.
+     * @returns 
+     */
+    private getDevicesByOwnerUserId = async (ownerId: string) => {
+        //We get an instance of the use case from the dependencies container
+        const findIoTDevice: FindIoTDevice = container.get(iotDeviceDependencies.UseCases.FindIoTDevice);
+        //We get the devices
+        return await findIoTDevice.byUserId({ userId: ownerId });
+    } 
 }

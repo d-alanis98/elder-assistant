@@ -9,7 +9,7 @@ import SubscriptionRepository from '../../domain/SubscriptionsRepository';
 
 /**
  * @author Damián Alanís Ramírez
- * @version 2.6.4
+ * @version 2.6.5
  * @description Find subscription use case.
  */
 export default class FindSubscription {
@@ -39,8 +39,8 @@ export default class FindSubscription {
      * @param {string} id Id of the subscription.
      * @returns 
      */
-    searchById = async (id: string): Promise<Nullable<Subscription>> => (
-        await this.subscriptionRepository.search({ _id: id })
+    searchById = async (id: string): Promise<Subscription> => (
+        await this.searchInRespository({ _id: id })
     );
 
     /**
