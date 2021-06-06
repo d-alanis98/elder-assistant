@@ -17,7 +17,7 @@ import { subscriptionsDependencies } from '../../../application/Shared/domain/co
 
 /**
  * @author Damian Alanis Ramirez
- * @version 1.3.1
+ * @version 2.4.1
  * @description Express subscription validation middleware.
  */
 export default class SubscriptionValidation {
@@ -33,19 +33,18 @@ export default class SubscriptionValidation {
         _: Response,
         next: NextFunction
     ) => {
-        try {
-            //We extract the primary user ID from the request parameters or body
-            const primaryUserId = request.params.primaryUserId || request.body.primaryUserId;
-            //We extract the secondary user ID form the user data attached from the token
-            const secondaryUserId = UserControllerHelpers.getUserIdFromRequest(request);
-            //We get the subscription by members
-            const subscription = await SubscriptionValidation.findSubscriptionByMembers(primaryUserId, secondaryUserId);
-            //We add the subscription data to the request
-            request.subscription = subscription.toPrimitives();
-            next();
-        } catch(exception) {
-            next(exception);
-        }
+        //We extract the primary user ID from the request parameters or body
+        const primaryUserId = request.params.primaryUserId || request.body.primaryUserId;
+        //We extract the secondary user ID form the user data attached from the token
+        const secondaryUserId = UserControllerHelpers.getUserIdFromRequest(request);
+        //We validate the primary user ID
+        if(!primaryUserId)
+            throw new SubscriptionNotFound();
+        //We get the subscription by members
+        const subscription = await SubscriptionValidation.findSubscriptionByMembers(primaryUserId, secondaryUserId);
+        //We add the subscription data to the request
+        request.subscription = subscription.toPrimitives();
+        next();
     }
 
     /**
@@ -59,20 +58,16 @@ export default class SubscriptionValidation {
         _: Response, 
         next: NextFunction
     ) => {
-        try {
-            if(!request.user)
-                throw new UserNotAuthenticated();
-            //We get data from the request
-            const { _id: to } = request.user;
-            //We get the subscription by Id
-            const subscription = await SubscriptionValidation.findSubscriptionByIdInRequest(request);
-            //We validate the ownership, if the subscription is not pointing to the current user, we generate an exception
-            if(subscription.to.toString() !== to)
-                throw new UserWithoutPermission();
-            next();
-        } catch(error) {
-            next(error);
-        }
+        if(!request.user)
+            throw new UserNotAuthenticated();
+        //We get data from the request
+        const { _id: to } = request.user;
+        //We get the subscription by Id
+        const subscription = await SubscriptionValidation.findSubscriptionByIdInRequest(request);
+        //We validate the ownership, if the subscription is not pointing to the current user, we generate an exception
+        if(subscription.to.toString() !== to)
+            throw new UserWithoutPermission();
+        next();
     }
 
     //Internal helpers

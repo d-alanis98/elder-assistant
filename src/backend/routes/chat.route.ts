@@ -27,8 +27,8 @@ export const register = (router: Router) => {
     const chatMessageController: ChatMessageController = new ChatMessageController();
     router.post(
         '/chat/:chatId/message',
+        UserAuthentication.validateAuthToken,
         //We create a middleware group, to determine the middlewares to apply depending on the user type
-        //The user authentication is handled by default
         new MiddlewareGroup(
             [//Middlewares to apply if the user is of primary type
                 UserAuthorization.validatePrimaryRole,
@@ -46,8 +46,8 @@ export const register = (router: Router) => {
     //Get chat messages
     router.get(
         '/chat/:chatId/messages',
+        UserAuthentication.validateAuthToken,
         //We create a middleware group, to determine the middlewares to apply depending on the user type
-        //The user authentication is handled by default
         new MiddlewareGroup(
             [//Middlewares to apply if the user is of primary type
                 UserAuthorization.validatePrimaryRole,

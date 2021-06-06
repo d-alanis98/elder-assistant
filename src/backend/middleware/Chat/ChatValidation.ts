@@ -15,7 +15,7 @@ import { chatDependencies } from '../../../application/Shared/domain/constants/d
 
 /**
  * @author Damián Alanís Ramírez
- * @version 1.1.1
+ * @version 1.2.1
  * @description Custom middleware for the Chat entity. It provides method to validate if the user is the owner of the chat
  * (for primary users), or to validate if the user is chat member (for secondary users).
  */
@@ -31,17 +31,13 @@ export default class ChatValidation {
         _: Response, 
         next: NextFunction
     ) => {
-        try {
-            //We get the data from the request
-            const chat = await ChatValidation.getChatById(request.params.chatId);
-            const userId = UserControllerHelpers.getUserIdFromRequest(request);
-            //We validate the ownership
-            if(chat.ownedBy.toString() !== userId)
-                throw new UserIsNotChatOwner();
-            next();
-        } catch(error) {
-            next(error);
-        }
+        //We get the data from the request
+        const chat = await ChatValidation.getChatById(request.params.chatId);
+        const userId = UserControllerHelpers.getUserIdFromRequest(request);
+        //We validate the ownership
+        if(chat.ownedBy.toString() !== userId)
+            throw new UserIsNotChatOwner();
+        next();
     }
 
     /**
@@ -55,15 +51,12 @@ export default class ChatValidation {
         _: Response, 
         next: NextFunction
     ) => {
-        try {
-            const chat = await ChatValidation.getChatById(request.params.chatId);
-            const userId = UserControllerHelpers.getUserIdFromRequest(request);
-            //We validate that the user is chat member
-            if(chat.members.members.find(member => member.toPrimitives()._id === userId) !== undefined)
-                throw new UserIsNotChatMember();
-        } catch(error) {
-            next(error);
-        }
+        const chat = await ChatValidation.getChatById(request.params.chatId);
+        const userId = UserControllerHelpers.getUserIdFromRequest(request);
+        //We validate that the user is chat member
+        if(chat.members.members.find(member => member.toPrimitives()._id === userId) === undefined)
+            throw new UserIsNotChatMember();
+        next();
     }
 
     //Internal methods

@@ -111,7 +111,7 @@ export const register = (router: Router) => {
     router.get(
         '/iot/device/:deviceId/data',
         //We create a middleware group, to determine the middlewares to apply depending on the user type
-        //The user authentication is handled by default
+        UserAuthentication.validateAuthToken,
         new MiddlewareGroup(
             [//Middlewares to apply if the user is of primary type
                 UserAuthorization.validatePrimaryRole,
@@ -129,7 +129,7 @@ export const register = (router: Router) => {
     router.get(
         '/iot/device/:deviceId/latest',
         //We create a middleware group, to determine the middlewares to apply depending on the user type
-        //The user authentication is handled by default
+        UserAuthentication.validateAuthToken,
         new MiddlewareGroup(
             [//Middlewares to apply if the user is of primary type
                 UserAuthorization.validatePrimaryRole,

@@ -20,7 +20,7 @@ import IoTDeviceRequestHelpers from '../Shared/IoTDevice/IoTDeviceRequestHelpers
 
 /**
  * @author Damián Alanís Ramírez
- * @version 1.3.1
+ * @version 1.3.2
  * @description Controller for the find IoT device use cases.
  */
 export default class IoTDeviceFindController extends Controller {
@@ -48,7 +48,7 @@ export default class IoTDeviceFindController extends Controller {
     handleDevicesByOwnerRequest = async (request: RequestWithUser, response: Response): Promise<void> => {
         try {
             //We get the user type
-            const userType = UserControllerHelpers.getUserIdFromRequest(request);
+            const userType = UserControllerHelpers.getUserTypeFromRequest(request);
             //We get the user ID, if the user is of type PRIMARY, the id is in the auth token, otherwise, it is in the URL 
             const userId = userType === AllowedUserTypes.PRIMARY
                 ? UserControllerHelpers.getUserIdFromRequest(request)
