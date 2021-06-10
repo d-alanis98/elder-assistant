@@ -12,10 +12,14 @@ import { iotDeviceDependencies } from '../../../application/Shared/domain/consta
 //Domain events
 import CreatedIoTDeviceData from '../../../application/IoTDeviceData/domain/events/CreatedIoTDeviceData';
 import OnCreatedIoTDeviceData from '../../../application/IoTDeviceData/domain/events/handlers/OnCreatedIoTDeviceData';
+//Extended request
+import { RequestWithIoTDevice } from '../../middleware/IoTDevice/IoTDeviceAuthorization';
+//Helpers
+import IoTDeviceRequestHelpers from '../Shared/IoTDevice/IoTDeviceRequestHelpers';
 
 /**
  * @author Damián Alanís Ramírez
- * @version 1.2.1
+ * @version 2.3.1
  * @description Controller to handle the create IoT device data request.
  */
 export default class IoTDeviceDataCreateController extends Controller {
@@ -24,13 +28,13 @@ export default class IoTDeviceDataCreateController extends Controller {
      * @param {Request} request Express request.
      * @param {Response} response Express response.
      */
-    run = async (request: Request, response: Response): Promise<void> => {
+    run = async (request: RequestWithIoTDevice, response: Response): Promise<void> => {
         try {
             //We perform the validation of the request (it must contain key and value in the body)
             this.validateRequest(request);
             //We get the data from the request
             const { key, value } = request.body;
-            const { deviceId } = request.params;
+            const { _id: deviceId } = IoTDeviceRequestHelpers.getIoTDeviceDataFromRequest(request);
             //We get the use case and execute it
             const createIoTDeviceData: CreateIoTDeviceData = container.get(iotDeviceDependencies.UseCases.CreateIoTDeviceData);
             const iotDeviceData: IoTDeviceData = await createIoTDeviceData.run({ key, value, deviceId });

@@ -11,6 +11,7 @@ import SubscriptionValidation from '../middleware/Subscription/SubscriptionValid
 import IoTDeviceAuthorization from '../middleware/IoTDevice/IoTDeviceAuthorization';
 import IoTDeviceDataValidation from '../middleware/IoTDeviceData/IoTDeviceDataValidation';
 import SubscriptionPermissions from '../middleware/Subscription/SubscriptionPermissions';
+import IoTDeviceAuthentication from '../middleware/IoTDevice/IoTDeviceAuthentication';
 //Controllers
 import IoTDeviceFindController from '../controllers/IoTDevice/IoTDeviceFindController';
 import IoTDeviceLinkController from '../controllers/IoTDevice/IoTDeviceLinkController';
@@ -93,16 +94,15 @@ export const register = (router: Router) => {
     )
 
     /**
-     * @todo, Validate device JWT instead of user one, because the request is going to be made from the IoT device. Also,
-     * remove the validation of primary role.
+     * IoT device data
      */
+
     //Add IoTDevice data record
     const iotDeviceDataCreateController: IoTDeviceDataCreateController = container.get(iotDeviceDependencies.Controllers.IoTDeviceDataCreateController);
     router.post(
-        '/iot/device/:deviceId/data',
+        '/iot/device/data',
         IoTDeviceDataValidation.validateBody(),
-        UserAuthentication.validateAuthToken,
-        UserAuthorization.validatePrimaryRole,
+        IoTDeviceAuthentication.validateToken,
         iotDeviceDataCreateController.run.bind(iotDeviceDataCreateController)
     );
 

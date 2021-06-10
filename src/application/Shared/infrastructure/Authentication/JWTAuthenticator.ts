@@ -11,7 +11,7 @@ import app from '../../../../configuration/app';
 
 /**
  * @author Dmaián Alanís Ramírez
- * @version 1.7.8
+ * @version 1.8.8
  */
 export default class JWTAuthenticator implements Authenticator {
 
@@ -120,7 +120,18 @@ export default class JWTAuthenticator implements Authenticator {
     public signRefreshToken = async (data: AggregateRoot) => JWTAuthenticator.sign(
         data,
         app.jwtRefreshPrivateKey,
-        { } //Refresh tokens don't expire, the user can revoke them manually
+        { } //Refresh tokens doesn't expire, the user can revoke them manually
+    );
+
+    /**
+     * Method to get the signed JWT for authentication of the IoT device.
+     * @param {AggregateRoot} data 
+     * @returns 
+     */
+    public signIoTDeviceToken = async (data: AggregateRoot) => JWTAuthenticator.sign(
+        data,
+        app.jwtPrivateKey,
+        { } //IoT device tokens doesn't expire
     );
 
     /**
@@ -142,5 +153,15 @@ export default class JWTAuthenticator implements Authenticator {
         tokenString,
         app.jwtRefreshPrivateKey
     );
+
+    /**
+     * Method to authenticate the IoT device token.
+     * @param {string} tokenString String with the token.
+     * @returns 
+     */
+    public authenticateIoTDeviceToken = async (tokenString: string) => this.authenticate(
+        tokenString,
+        app.jwtPrivateKey
+    )
 
 }

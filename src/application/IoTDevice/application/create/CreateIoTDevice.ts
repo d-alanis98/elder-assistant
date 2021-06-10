@@ -5,11 +5,14 @@ import IoTDeviceType from '../../domain/value-objects/IoTDeviceType';
 import IoTDeviceEventKeys from '../../domain/value-objects/IoTDeviceEventKeys';
 //Repository
 import { IoTDeviceRepository } from '../../domain/IoTDeviceRepository';
+//Dependency injection
+import container from '../../../../backend/dependency-injection';
+import dependencies from '../../../Shared/domain/constants/dependencies';
 
 
 /**
  * @author Damián Alanís Ramírez
- * @version 2.3.1
+ * @version 3.4.1
  * @description Create Iot device use case abstraction.
  */
 export default class CreateIoTDevice {
@@ -24,7 +27,7 @@ export default class CreateIoTDevice {
         name,
         type,
         eventKeys
-    }: NewIoTDevicePrimitives) => {
+    }: NewIoTDevicePrimitives): Promise<IoTDeviceResponse> => {
         //We create a new IoTDevice instance with a random ID.
         const device: IoTDevice = this.getNewDeviceWithId({ 
             name, 
@@ -33,15 +36,21 @@ export default class CreateIoTDevice {
         });
         //We save the device in the repository
         await this.iotDeviceRepository.create(device);
+        //We get the authentication token of the device
+        const token = await this.getDeviceAuthToken(device);
         //We return the device
-        return device;
+        return {
+            token,
+            device,
+        };
     }
+    //Internal helpers
 
     /**
      * Method to generate a random device ID.
      * @returns {string} Device ID.
      */
-    generateDeviceId = () => IoTDeviceId.random();
+    private generateDeviceId = () => IoTDeviceId.random().toString();
 
     /**
      * Method to get a new IoTDevice instance from the primitive values received.
@@ -49,17 +58,34 @@ export default class CreateIoTDevice {
      * @param type Device type.
      * @returns 
      */
-    getNewDeviceWithId = ({        
+    private getNewDeviceWithId = ({        
         name, 
         type,
         eventKeys
     }: NewIoTDevicePrimitives): IoTDevice => (
         IoTDevice.fromPrimitives({
-            _id: this.generateDeviceId().toString(),
+            _id: this.generateDeviceId(),
             name,
             type,
             eventKeys: eventKeys || IoTDeviceEventKeys.getDefaultIoTDeviceEventKeys(new IoTDeviceType(type))
         })
     );
 
+    /**
+     * Method that generates a token with the Authenticator dependency.
+     * @param {IoTDevice} createdIoTDevice IoT device data to store in the token. 
+     * @returns 
+     */
+    private getDeviceAuthToken = async (createdIoTDevice: IoTDevice) => {
+        //We get and execut the authenticator
+        const authenticator = container.get(dependencies.Authenticator);
+        return await authenticator.signIoTDeviceToken(createdIoTDevice);
+    }
+
+}
+
+//Types
+interface IoTDeviceResponse {
+    token: string;
+    device: IoTDevice;
 }
