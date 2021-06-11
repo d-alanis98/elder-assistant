@@ -17,7 +17,7 @@ import { subscriptionsDependencies } from '../../../application/Shared/domain/co
 
 /**
  * @author Damian Alanis Ramirez
- * @version 2.4.1
+ * @version 2.4.2
  * @description Express subscription validation middleware.
  */
 export default class SubscriptionValidation {
@@ -34,7 +34,7 @@ export default class SubscriptionValidation {
         next: NextFunction
     ) => {
         //We extract the primary user ID from the request parameters or body
-        const primaryUserId = request.params.primaryUserId || request.body.primaryUserId;
+        const primaryUserId = request.params.primaryUserId || request.body.primaryUserId || request.query.primaryUserId;
         //We extract the secondary user ID form the user data attached from the token
         const secondaryUserId = UserControllerHelpers.getUserIdFromRequest(request);
         //We validate the primary user ID
