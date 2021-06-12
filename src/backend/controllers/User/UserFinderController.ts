@@ -12,7 +12,7 @@ import dependencies from '../../../application/Shared/domain/constants/dependenc
 
 /**
  * @author Damián Alanís Ramírez
- * @version 1.3.3
+ * @version 1.3.4
  * @description Controller for the get user use case.
  */
 export default class UserFinderController extends Controller {
@@ -46,13 +46,15 @@ export default class UserFinderController extends Controller {
     getAllUsers = async (request: Request, response: Response) => {
         try {
             //We get the data from the request
-            const { name, limit, lastName, startingAt } = request.body;
+            const { name: nameQuery, limit: limitQuery, startingAt } = request.query;
+            //We normalize some values
+            const name = nameQuery ? nameQuery.toString() : '';
+            const limit = limitQuery ? Number(limitQuery) : undefined;
             //We get and execute the use case
             const userFinder: UserFinder = container.get(dependencies.UserFindUseCase);
             const usersList = await userFinder.getAllUsers({
                 name,
                 limit,
-                lastName,
                 startingAt
             });
             //We send the response with the paginated data in primitive values

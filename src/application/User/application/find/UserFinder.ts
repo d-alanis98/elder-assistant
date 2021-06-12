@@ -5,10 +5,11 @@ import UserNotFound from '../../domain/exceptions/UserNotFound';
 import UserRepository from '../../domain/UserRepository';
 //Shared domain
 import { QueryParameters } from '../../../Shared/infrastructure/Persistence/DataRepository';
+import PaginatedDataResult from '../../../Shared/domain/requests/PaginatedDataResult';
 
 /**
  * @author Damián Alanís Ramírez
- * @version 1.3.2
+ * @version 2.3.4
  * @description Find user use case abstraction, it returns a User instance if the provided userId was found in the repository
  * or throws an exception if it wasn't.
  */
@@ -53,17 +54,20 @@ export default class UserFinder {
     getAllUsers = async ({
         name: userName,
         limit: userLimit,
-        lastName: userLastName,
         startingAt,
-    }: getAllUserParameters) => {
+    }: getAllUserParameters): Promise<UsersList> => {
         //We set the default parameters
         const name = userName || '';
         const limit = userLimit || this.DEFAULT_USERS_LIMIT;
-        const lastName = userLastName || '';
-        //We set the filters
+        //We set the filters, we perform an expression with a regex match, expecting to find the name in the name + lastName string
         const filters = {
-            name: { $regex: name, $options: 'i' },
-            lastName: { $regex: lastName, $options: 'i'}
+            $expr: {
+                $regexMatch: {
+                    input: { $concat: ['$name', ' ', '$lastName'] },
+                    regex: name,  
+                    options: 'i'
+                }
+            }
         };
         //We get the paginated records
         const paginatedData = await this.dataRepository.searchAllPaginated(
@@ -74,7 +78,10 @@ export default class UserFinder {
         if(!paginatedData)
             throw new UserNotFound();
         //We return the paginated data
-        return paginatedData;
+        return {
+            ...paginatedData,
+            data: paginatedData.data.map(user => User.getUserWithoutPassword(user))
+        };
     }
 
 }
@@ -82,5 +89,6 @@ export default class UserFinder {
 //Props
 interface getAllUserParameters extends QueryParameters {
     name: string;
-    lastName: string;
 }
+
+type UsersList = PaginatedDataResult<User>;
