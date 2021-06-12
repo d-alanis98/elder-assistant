@@ -3,13 +3,14 @@ import User from '../../domain/User';
 import UserId from '../../../Shared/domain/modules/User/UserId';
 import UserNotFound from '../../domain/exceptions/UserNotFound';
 import UserRepository from '../../domain/UserRepository';
+import { AllowedUserTypes } from '../../domain/value-objects/UserType';
 //Shared domain
 import { QueryParameters } from '../../../Shared/infrastructure/Persistence/DataRepository';
 import PaginatedDataResult from '../../../Shared/domain/requests/PaginatedDataResult';
 
 /**
  * @author Damián Alanís Ramírez
- * @version 2.3.4
+ * @version 2.3.5
  * @description Find user use case abstraction, it returns a User instance if the provided userId was found in the repository
  * or throws an exception if it wasn't.
  */
@@ -44,7 +45,7 @@ export default class UserFinder {
     }
 
     /**
-     * Method to get all the users by name and lastname match.
+     * Method to get all the primary users by name and lastname match.
      * @param {string} name User name.
      * @param {number} limit Query results limit.
      * @param {string} lastName User last name.
@@ -67,7 +68,8 @@ export default class UserFinder {
                     regex: name,  
                     options: 'i'
                 }
-            }
+            },
+            type: AllowedUserTypes.PRIMARY
         };
         //We get the paginated records
         const paginatedData = await this.dataRepository.searchAllPaginated(
