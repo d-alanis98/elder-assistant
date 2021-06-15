@@ -22,7 +22,7 @@ import app from '../configuration/app';
 
 /**
  * @author Damian Alanis Ramirez
- * @version 4.4.8
+ * @version 4.5.8
  * @description Server implementation with Express framework. This creates the server,
  * apply middlewares, register routes, register the error handler and starts the server 
  * that will attend requests in the specified port.
@@ -63,6 +63,7 @@ export default class Server {
             origin: true, 
             credentials: true
         }));
+        this.express.use(express.static('uploads'))
     }
 
     /**

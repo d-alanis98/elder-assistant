@@ -3,6 +3,7 @@ import IoTDeviceDataId from './value-objects/IoTDeviceDataId';
 import IoTDeviceDataKey from './value-objects/IoTDeviceDataKey';
 import IoTDeviceDataValue, { IoTDeviceDataType } from './value-objects/IoTDeviceValue';
 import IoTDeviceDataDate from './value-objects/IoTDeviceDataDate';
+import IoTDeviceFilePath from './value-objects/IoTDeviceFilePath';
 //IoTDevice domain
 import IoTDeviceId from '../../IoTDevice/domain/value-objects/IoTDeviceId';
 //Shared domain
@@ -11,7 +12,7 @@ import AggregateRoot from '../../Shared/domain/AggregateRoot';
 
 /**
  * @author Damián Alanís Ramírez
- * @version 2.3.1
+ * @version 2.4.2
  * @description IoTDeviceData entity abstraction.
  */
 export default class IoTDeviceData extends AggregateRoot {
@@ -20,6 +21,7 @@ export default class IoTDeviceData extends AggregateRoot {
     readonly value: IoTDeviceDataValue;
     readonly deviceId: IoTDeviceId;
     readonly issuedAt: IoTDeviceDataDate;
+    readonly filePath?: IoTDeviceFilePath;
 
     /**
      * Constructor.
@@ -33,7 +35,8 @@ export default class IoTDeviceData extends AggregateRoot {
         key: IoTDeviceDataKey,
         value: IoTDeviceDataValue,
         deviceId: IoTDeviceId,
-        issuedAt: Nullable<IoTDeviceDataDate>
+        issuedAt: Nullable<IoTDeviceDataDate>,
+        filePath?: IoTDeviceFilePath
     ) {
         super();
         //If no ID is provided, we create a random one
@@ -43,6 +46,7 @@ export default class IoTDeviceData extends AggregateRoot {
         this.deviceId = deviceId;
         //If no date is provided, we get the current one
         this.issuedAt = issuedAt || IoTDeviceDataDate.current();
+        this.filePath = filePath;
     }
 
     /**
@@ -58,13 +62,15 @@ export default class IoTDeviceData extends AggregateRoot {
         key,
         value,
         deviceId,
-        issuedAt
+        issuedAt,
+        filePath,
     }: IoTDeviceDataPrimitives) => new IoTDeviceData(
         _id ? new IoTDeviceDataId(_id) : null,
         new IoTDeviceDataKey(key),
         new IoTDeviceDataValue(value),
         new IoTDeviceId(deviceId),
-        issuedAt ? new IoTDeviceDataDate(issuedAt) : null
+        issuedAt ? new IoTDeviceDataDate(issuedAt) : null,
+        filePath ? new IoTDeviceFilePath(filePath) : undefined
     );
 
     /**
@@ -76,7 +82,8 @@ export default class IoTDeviceData extends AggregateRoot {
         key: this.key.toString(),
         value: this.value.value,
         deviceId: this.deviceId.toString(),
-        issuedAt: this.issuedAt.toString()
+        issuedAt: this.issuedAt.toString(),
+        filePath: this.filePath?.toString()
     });
 
     /**
@@ -94,12 +101,14 @@ export interface IoTDeviceDataParameters {
     value: IoTDeviceDataValue;
     deviceId: IoTDeviceId;
     issuedAt: IoTDeviceDataDate;
+    filePath?: IoTDeviceFilePath;
 }
 
 export interface IoTDeviceDataPrimitives {
-    _id?: string,
-    key: string,
-    value: IoTDeviceDataType,
-    deviceId: string,
-    issuedAt?: string,
+    _id?: string;
+    key: string;
+    value: IoTDeviceDataType;
+    deviceId: string;
+    issuedAt?: string;
+    filePath?: string;
 }

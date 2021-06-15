@@ -4,6 +4,8 @@ import DeviceDataHandler from './DeviceDataHandler';
 import CreatedIoTDeviceData from '../../CreatedIoTDeviceData';
 //IoTDevice use cases
 import FindIoTDevice from '../../../../../IoTDevice/application/find/FindIoTDevice';
+//Subscription use cases
+import FindSubscription from '../../../../../Subscriptions/application/find/FindSubscription';
 //User domain
 import User from '../../../../../User/domain/User';
 //WebSockets
@@ -12,12 +14,12 @@ import WebSocketClients from '../../../../../Shared/infrastructure/WebSockets/We
 import Logger from '../../../../../Shared/domain/Logger';
 //Dependency injection
 import container from '../../../../../../backend/dependency-injection';
-import dependencies, { iotDeviceDependencies } from '../../../../../Shared/domain/constants/dependencies';
+import dependencies, { iotDeviceDependencies, subscriptionsDependencies } from '../../../../../Shared/domain/constants/dependencies';
 
 
 /**
  * @author Damián Alanís Ramírez
- * @version 2.1.1
+ * @version 2.2.1
  * @description Basic handler for IoTDevice data create and update events. It sends the updated value through web sockets
  * to the allowed users (the owner and the subscribers with the corresponding permissions).
  */
@@ -41,9 +43,7 @@ export default class BaseHandler implements DeviceDataHandler {
         const logger: Logger = container.get(dependencies.Logger);
         try {
             //We get the users to notify
-            const usersToNotify: User[] = await this.getUsersToNotify(event);
-            //We extract only the ID in primitive value (string) of the users to notify.
-            const usersIDToNotify = usersToNotify.map(user => user.id.toString());
+            const usersIDToNotify: string[] = await this.getIdOfUsersToNotify(event);
             //We extract the data to send and serialize it
             const dataToSend = this.extractDataFromEvent(event);
             //We send the data
@@ -59,16 +59,46 @@ export default class BaseHandler implements DeviceDataHandler {
         
     }
 
+    /**
+     * Method to extract the data from the event and transform it to primitive values.
+     * @param {CreatedIoTDeviceData} event Emitted event.
+     * @returns 
+     */
     private extractDataFromEvent = (event: CreatedIoTDeviceData) => (
         event.deviceData.toPrimitives()
     );
 
-    private getUsersToNotify = async (event: CreatedIoTDeviceData): Promise<User[]> => {
+    /**
+     * Method to get ehe ID os the users to notify.
+     * @param {CreatedIoTDeviceData} event Emitted event.
+     * @returns 
+     */
+    private getIdOfUsersToNotify = async (event: CreatedIoTDeviceData): Promise<string[]> => {
         const { deviceData: { deviceId } } = event;
         //We get and execute the FindIoTDevice use case.
         const findIoTDevice: FindIoTDevice = container.get(iotDeviceDependencies.UseCases.FindIoTDevice);
         const ownerUser: User = await findIoTDevice.findOwnerByDeviceId(deviceId);
-        //TODO: Get subscriptors allowed to see the activity
-        return [ownerUser];
+        //We get the ID's of the subscriptors to notify
+        const subscriptorsToNotify = await this.getAllowedSubscriptorsIds(ownerUser);
+        //We return the array of ID's of the users to notify
+        return [
+            ownerUser.id.toString(), 
+            ...subscriptorsToNotify
+        ];
+    }
+
+    /**
+     * Method to get the ID's of the allowed subscriptors, which are the ones with an accepted subscription and the right
+     * permissions (receiveNotificationsOnOwnerEvents).
+     * @param {User} ownerUser User that owns the device.
+     * @returns 
+     */
+    private getAllowedSubscriptorsIds = async (ownerUser: User): Promise<string[]> => {
+        const findSubscription: FindSubscription = container.get(subscriptionsDependencies.UseCases.FindSubscription);
+        const allowedSubscriptions = await findSubscription.getAllAcceptedSubscriptions(ownerUser.id.toString());
+        //We get the array f
+        return allowedSubscriptions.filter(subscription => (
+            subscription.permissions?.hasPermission('receiveNotificationsOnOwnerEvents')
+        )).map(subscription => subscription.from.toString());
     }
 }

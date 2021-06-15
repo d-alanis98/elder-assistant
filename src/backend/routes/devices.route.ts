@@ -3,6 +3,7 @@ import { Router } from 'express';
 import container from '../dependency-injection';
 import { iotDeviceDependencies } from '../../application/Shared/domain/constants/dependencies';
 //Middlewares
+import upload from '../middleware/Shared/FileUpload';
 import MiddlewareGroup from '../middleware/Shared/MiddlewareGroup';
 import UserAuthorization from '../middleware/User/UserAuthorization';
 import UserAuthentication from '../middleware/User/UserAuthentication';
@@ -103,6 +104,7 @@ export const register = (router: Router) => {
         '/iot/device/data',
         IoTDeviceDataValidation.validateBody(),
         IoTDeviceAuthentication.validateToken,
+        upload('PanicAlerts').single('audioFile'),
         iotDeviceDataCreateController.run.bind(iotDeviceDataCreateController)
     );
 

@@ -1,5 +1,6 @@
 //Domain
 import Subscription, { SubscriptionRequestPrimitives } from '../../domain/Subscription';
+import { SubscriptionValidStatus } from '../../domain/value-objects/SubscriptionStatus';
 //Shared
 import { Nullable } from '../../../Shared/domain/Nullable';
 //Exceptions
@@ -9,7 +10,7 @@ import SubscriptionRepository from '../../domain/SubscriptionsRepository';
 
 /**
  * @author Damián Alanís Ramírez
- * @version 2.6.5
+ * @version 2.7.5
  * @description Find subscription use case.
  */
 export default class FindSubscription {
@@ -53,6 +54,22 @@ export default class FindSubscription {
         to, 
         from
     }: SubscriptionRequestPrimitives) => this.subscriptionRepository.search({ to, from });
+
+
+    /**
+     * Method to get all the accepted subscriptors of a primary user.
+     * @param {string} to Target user ID.
+     * @returns 
+     */
+    getAllAcceptedSubscriptions = async (to: string): Promise<Subscription[]> => {
+        const subscriptions = await this.subscriptionRepository.searchAll({
+            to,
+            status: SubscriptionValidStatus.ACCEPTED
+        });
+        if(!subscriptions)
+            throw new SubscriptionNotFound();
+        return subscriptions;
+    };
 
     /**
      * Method to get the subscription requests made by a user.

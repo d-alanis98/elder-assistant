@@ -1,4 +1,4 @@
-import { Request, Response } from 'express';
+import { Response } from 'express';
 import httpStatus from 'http-status';
 //IoTDeviceData domain
 import IoTDeviceData from '../../../application/IoTDeviceData/domain/IoTDeviceData';
@@ -19,7 +19,7 @@ import IoTDeviceRequestHelpers from '../Shared/IoTDevice/IoTDeviceRequestHelpers
 
 /**
  * @author Damián Alanís Ramírez
- * @version 2.3.1
+ * @version 3.5.2
  * @description Controller to handle the create IoT device data request.
  */
 export default class IoTDeviceDataCreateController extends Controller {
@@ -30,14 +30,19 @@ export default class IoTDeviceDataCreateController extends Controller {
      */
     run = async (request: RequestWithIoTDevice, response: Response): Promise<void> => {
         try {
-            //We perform the validation of the request (it must contain key and value in the body)
-            this.validateRequest(request);
+            //We get the file from the request
+            const { file } = request;
             //We get the data from the request
             const { key, value } = request.body;
             const { _id: deviceId } = IoTDeviceRequestHelpers.getIoTDeviceDataFromRequest(request);
             //We get the use case and execute it
             const createIoTDeviceData: CreateIoTDeviceData = container.get(iotDeviceDependencies.UseCases.CreateIoTDeviceData);
-            const iotDeviceData: IoTDeviceData = await createIoTDeviceData.run({ key, value, deviceId });
+            const iotDeviceData: IoTDeviceData = await createIoTDeviceData.run({ 
+                key, 
+                value, 
+                deviceId,
+                filePath: file?.filename 
+            });
             //We send the device data record (with the generated ID), as record
             response.status(httpStatus.CREATED).send(iotDeviceData.toPrimitives());
         } catch(error) {
