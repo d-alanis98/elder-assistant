@@ -76,8 +76,9 @@ export default class CreateNotificationSettings {
         deviceToken: string,
         existingNotificationSettings: NotificationSettings
     ): NotificationSettings => {
-        //We add the token
-        existingNotificationSettings.deviceTokens.addToken(deviceToken)
+        //We add the token if it was not set
+        if(!existingNotificationSettings.deviceTokens.value.includes(deviceToken))
+            existingNotificationSettings.deviceTokens.addToken(deviceToken)
         //We return the updated notification settings
         return new NotificationSettings(
             existingNotificationSettings.id,

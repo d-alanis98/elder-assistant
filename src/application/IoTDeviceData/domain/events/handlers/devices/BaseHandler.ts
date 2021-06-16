@@ -19,12 +19,12 @@ import dependencies, { iotDeviceDependencies, subscriptionsDependencies } from '
 
 /**
  * @author Damián Alanís Ramírez
- * @version 2.2.1
+ * @version 3.2.1
  * @description Basic handler for IoTDevice data create and update events. It sends the updated value through web sockets
  * to the allowed users (the owner and the subscribers with the corresponding permissions).
  */
 export default class BaseHandler implements DeviceDataHandler {
-
+    protected ownerUser?: User;
     /**
      * Method to perform the base actions on a created record event. The default action is to notify via web sockets
      * to all the corresponding users.
@@ -73,11 +73,13 @@ export default class BaseHandler implements DeviceDataHandler {
      * @param {CreatedIoTDeviceData} event Emitted event.
      * @returns 
      */
-    private getIdOfUsersToNotify = async (event: CreatedIoTDeviceData): Promise<string[]> => {
+    protected getIdOfUsersToNotify = async (event: CreatedIoTDeviceData): Promise<string[]> => {
         const { deviceData: { deviceId } } = event;
         //We get and execute the FindIoTDevice use case.
         const findIoTDevice: FindIoTDevice = container.get(iotDeviceDependencies.UseCases.FindIoTDevice);
         const ownerUser: User = await findIoTDevice.findOwnerByDeviceId(deviceId);
+        //We set the owner user
+        this.ownerUser = ownerUser;
         //We get the ID's of the subscriptors to notify
         const subscriptorsToNotify = await this.getAllowedSubscriptorsIds(ownerUser);
         //We return the array of ID's of the users to notify

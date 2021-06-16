@@ -20,6 +20,7 @@
   "license": "MIT",
   "dependencies": {
     "@elastic/elasticsearch": "^7.12.0",
+    "axios": "^0.21.1",
     "bcrypt": "^5.0.1",
     "body-parser": "^1.19.0",
     "bodybuilder": "^2.4.0",

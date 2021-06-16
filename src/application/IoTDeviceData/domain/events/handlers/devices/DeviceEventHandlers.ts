@@ -1,15 +1,18 @@
 //IoTDevice domain
 import { deviceEventKeys } from '../../../../../IoTDevice/domain/constants/devices';
+import { IoTDeviceValidTypes } from '../../../../../IoTDevice/domain/value-objects/IoTDeviceType';
 //Handlers contract
 import DeviceDataHandler from './DeviceDataHandler';
 //Base handler
 import BaseHandler from './BaseHandler';
+//Handlers
+import PanicAlertHandler from './wearable/PanicAlertHandler';
 //Utils
 import ObjectHelper from '../../../../../Shared/domain/utils/ObjectHelper';
 
 /**
  * @author Damián Alanís Ramírez
- * @version 2.3.1
+ * @version 3.4.2
  * @description Class to set the device handlers dictionary dynamically, based on the deviceEventKeys object in the devices
  * domain.
  */
@@ -71,10 +74,11 @@ export default class DeviceEventHandlers {
      * @returns 
      */
     private getHandler = (eventKey: string, deviceType: string) => {
-        const path = `./${deviceType.toLowerCase()}/${eventKey}Handler.ts`;
         try {
-            const handler = require(path);
-            return new handler();
+            const handler = eventHandlersDictionary?.[deviceType]?.[eventKey];
+            if(!handler)
+                throw new Error();
+            return handler;
         } catch {
             return new BaseHandler();
         }
@@ -90,5 +94,16 @@ type EventKeysEntry = [
     key: string,
     value: string[]
 ]
+
+interface HandlersDictionaryByEventKey {
+    [deviceType: string]: HandlersDictionary;
+}
+
+//Data
+const eventHandlersDictionary: HandlersDictionaryByEventKey = {
+    [IoTDeviceValidTypes.WEARABLE]: {
+        PanicAlert: new PanicAlertHandler(),
+    }
+}
 
 

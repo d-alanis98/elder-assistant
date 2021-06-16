@@ -23,7 +23,7 @@ services:
     #Use cases
     NotificationSettings.SearchNotificationSettings:
         class: ../../../../application/NotificationSettings/application/search/SearchNotificationSettings
-        arguments: ['NotificationSettings.NotificationSettingsRepository']
+        arguments: ['@NotificationSettings.NotificationSettingsRepository']
     NotificationSettings.CreateNotificationSettings:
         class: ../../../../application/NotificationSettings/application/create/CreateNotificationSettings
         arguments: ['@NotificationSettings.NotificationSettingsRepository']
