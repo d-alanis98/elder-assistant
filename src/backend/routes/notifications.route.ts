@@ -3,6 +3,7 @@ import { Router } from 'express';
 import UserAuthentication from '../middleware/User/UserAuthentication';
 //Controllers
 import NotificationsController from '../controllers/Notifications/NotificationsController';
+import NotificationSettingsController from '../controllers/NotificationSettings/NotificationSettingsController';
 
 
 export const register = (router: Router) => {
@@ -12,5 +13,16 @@ export const register = (router: Router) => {
         '/notifications',
         UserAuthentication.validateAuthToken,
         notificationsController.run.bind(notificationsController)
+    );
+
+    /**
+     * Notification settings
+     */
+    const notificationSettingsController: NotificationSettingsController = new NotificationSettingsController();
+    //Register device token for push notifications
+    router.post(
+        '/notifications/register-token',
+        UserAuthentication.validateAuthToken,
+        notificationSettingsController.run.bind(notificationSettingsController)
     );
 }

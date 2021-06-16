@@ -14,3 +14,20 @@ services:
     Notifications.NotificationsController:
         class: ../../../../backend/controllers/Notifications/NotificationsController
         arguments: []
+
+    #NotificationSettings
+    #Repositories
+    NotificationSettings.NotificationSettingsRepository:
+        class: ../../../../application/NotificationSettings/infrastructure/persistence/MongoNotificationSettingsRepository
+        arguments: ['@Shared.DataRepository']
+    #Use cases
+    NotificationSettings.SearchNotificationSettings:
+        class: ../../../../application/NotificationSettings/application/search/SearchNotificationSettings
+        arguments: ['NotificationSettings.NotificationSettingsRepository']
+    NotificationSettings.CreateNotificationSettings:
+        class: ../../../../application/NotificationSettings/application/create/CreateNotificationSettings
+        arguments: ['@NotificationSettings.NotificationSettingsRepository']
+    #Controllers
+    NotificationSettings.NotificationSettingsController:
+        class: ../../../../backend/controllers/NotificationSettings/NotificationSettingsController
+        arguments: []

@@ -20,7 +20,7 @@ import IoTDeviceRequestHelpers from '../Shared/IoTDevice/IoTDeviceRequestHelpers
 
 /**
  * @author Damián Alanís Ramírez
- * @version 1.3.2
+ * @version 1.4.2
  * @description Controller for the find IoT device use cases.
  */
 export default class IoTDeviceFindController extends Controller {
@@ -36,6 +36,20 @@ export default class IoTDeviceFindController extends Controller {
             //We send the response
             response.status(httpStatus.OK).send(devicePrimitives);
         } catch (exception) {
+            this.handleBaseExceptions(exception, response);
+        }
+    }
+
+    searchById = async (request: RequestWithIoTDevice, response: Response): Promise<void> => {
+        try {
+            //We get the device ID fro the token
+            const { _id: id } = IoTDeviceRequestHelpers.getIoTDeviceDataFromRequest(request);
+            //We get and execute the use case
+            const findIoTDevice: FindIoTDevice = container.get(iotDeviceDependencies.UseCases.FindIoTDevice);
+            const device = await findIoTDevice.run({ id });
+            //We send the data to the user
+            response.status(httpStatus.OK).send(device.toPrimitives());
+        } catch(exception) {
             this.handleBaseExceptions(exception, response);
         }
     }

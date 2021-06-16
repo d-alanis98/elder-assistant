@@ -49,6 +49,7 @@ export const register = (router: Router) => {
         iotDeviceCreateController.update.bind(iotDeviceCreateController)
     );
 
+
     //Find device by id
     const iotDeviceFindController: IoTDeviceFindController = container.get(iotDeviceDependencies.Controllers.IoTDeviceFindController);
     router.get(
@@ -57,6 +58,14 @@ export const register = (router: Router) => {
         UserAuthorization.validatePrimaryRole,
         IoTDeviceAuthorization.validateDeviceOwnership,
         iotDeviceFindController.run.bind(iotDeviceFindController)
+    );
+
+
+    //Get data of the device (intended for the device itself, to load configuration, etc)
+    router.get(
+        '/iot/device',
+        IoTDeviceAuthentication.validateToken,
+        iotDeviceFindController.searchById.bind(iotDeviceFindController)
     );
 
     //Get devices owned by a primary user

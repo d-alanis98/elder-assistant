@@ -85,3 +85,13 @@ export const notificationsDependencies = {
         NotificationsController: 'Notifications.NotificationsController'
     }
 }
+
+export const notificationSettingsDependencies = {
+    UseCases: {
+        CreateNotificationSettings: 'NotificationSettings.CreateNotificationSettings',
+        SearchNotificationSettings: 'NotificationSettings.SearchNotificationSettings'
+    },
+    Controllers: {
+        NotificationSettingsController: 'NotificationSettings.NotificationSettingsController'
+    } 
+}
