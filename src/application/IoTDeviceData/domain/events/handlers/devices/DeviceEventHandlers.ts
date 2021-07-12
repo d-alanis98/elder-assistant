@@ -7,6 +7,7 @@ import DeviceDataHandler from './DeviceDataHandler';
 import BaseHandler from './BaseHandler';
 //Handlers
 import PanicAlertHandler from './wearable/PanicAlertHandler';
+import CurrentDosisHandler from './pillbox/CurrentDosisHandler';
 //Utils
 import ObjectHelper from '../../../../../Shared/domain/utils/ObjectHelper';
 
@@ -103,6 +104,9 @@ interface HandlersDictionaryByEventKey {
 const eventHandlersDictionary: HandlersDictionaryByEventKey = {
     [IoTDeviceValidTypes.WEARABLE]: {
         PanicAlert: new PanicAlertHandler(),
+    },
+    [IoTDeviceValidTypes.PILLBOX]: {
+        CurrentDosis: new CurrentDosisHandler()
     }
 }
 
